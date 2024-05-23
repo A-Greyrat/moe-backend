@@ -104,7 +104,7 @@ public class VideoServiceImpl implements VideoService {
             throw new BaseException(MessageConstant.INVALID_FILE_PATH);
         }
         // 链接处理
-        createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath);
+        createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformCbWillFinish");
 
         return entity.getId();
     }
@@ -126,7 +126,7 @@ public class VideoServiceImpl implements VideoService {
         videoMapper.insert(entity);
 
         // 链接处理
-        createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath);
+        createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformCbWillFinish");
 
         return entity.getId();
     }
@@ -136,7 +136,7 @@ public class VideoServiceImpl implements VideoService {
      * @param videoId :
      * @param originPath 如 tmp/1/video.mp4
      */
-    private void createTransformTask(Long videoGroupId, Long videoId, String originPath) {
+    private void createTransformTask(Long videoGroupId, Long videoId, String originPath, String cbStr) {
         // 视频转码
         var task = new VideoTransformTask()
                 .setId(UUID.randomUUID() + "")
@@ -148,7 +148,7 @@ public class VideoServiceImpl implements VideoService {
                         "video-group/" + videoGroupId + "/" + videoId + "/1080p.mp4"
                 })
                 .setStatus(new VideoTransformTask.Status[]{VideoTransformTask.Status.WAITING, VideoTransformTask.Status.WAITING, VideoTransformTask.Status.WAITING})
-                .setCbBeanNameAndMethodName("videoServiceImpl.videoTransformCbWillFinish");
+                .setCbBeanNameAndMethodName(cbStr);
         // 保存任务
         redisTemplate.opsForValue().set(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + task.getId(), task, TRANSFORM_TASK_REDIS_TTL, TimeUnit.SECONDS);
         stringRedisTemplate.opsForValue().set(RedisConstant.VIDEO_TRANSFORM_TASK_VIDEO_ID + task.getVideoId(), task.getId(), TRANSFORM_TASK_REDIS_TTL, TimeUnit.SECONDS);
@@ -173,12 +173,12 @@ public class VideoServiceImpl implements VideoService {
         redisTemplate.delete(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + task.getId());
         stringRedisTemplate.delete(RedisConstant.VIDEO_TRANSFORM_TASK_VIDEO_ID + task.getVideoId());
         var self = SpringContextUtil.getBean(VideoServiceImpl.class);
-        self.videoTransformSave(task);
+        self.videoTransformSave(task, Video.Status.ENABLE);
     }
 
     @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId")
     @Transactional
-    public void videoTransformSave(VideoTransformTask task) {
+    public void videoTransformSave(VideoTransformTask task, Byte videoStatus) {
         for (var taskType : task.getTaskTypes()) {
             if (videoSrcMapper.update(new LambdaUpdateWrapper<VideoSrc>()
                     .eq(VideoSrc::getVideoId, task.getVideoId())
@@ -194,14 +194,16 @@ public class VideoServiceImpl implements VideoService {
         }
         videoMapper.updateById(new Video()
                 .setId(task.getVideoId())
-                .setStatus(Video.Status.ENABLE)
+                .setStatus(videoStatus)
         );
         // 如果视频组显示正在转码(转码没设缓存)，那放出来
-        var self = SpringContextUtil.getBean(VideoServiceImpl.class);
-        var videoGroup = videoGroupMapper.selectById(self.getVideo(task.getVideoId()).getVideoGroupId());
-        if (Objects.equals(videoGroup.getVideoGroupStatus(), VideoGroup.Status.TRANSFORMING)) {
-            var videoGroupServiceBase = SpringContextUtil.getBean(VideoGroupServiceBase.class);
-            videoGroupServiceBase.changeStatus(videoGroup.getId(), VideoGroup.Status.ENABLE);
+        if (Objects.equals(videoStatus, Video.Status.ENABLE)) {
+            var self = SpringContextUtil.getBean(VideoServiceImpl.class);
+            var videoGroup = videoGroupMapper.selectById(self.getVideo(task.getVideoId()).getVideoGroupId());
+            if (Objects.equals(videoGroup.getVideoGroupStatus(), VideoGroup.Status.TRANSFORMING)) {
+                var videoGroupServiceBase = SpringContextUtil.getBean(VideoGroupServiceBase.class);
+                videoGroupServiceBase.changeStatus(videoGroup.getId(), VideoGroup.Status.ENABLE);
+            }
         }
     }
 
@@ -225,7 +227,7 @@ public class VideoServiceImpl implements VideoService {
                 throw new BaseException(MessageConstant.INVALID_FILE_PATH);
             if (Objects.equals(videoMapper.selectById(updateVideoDTO.getId()).getStatus(), Video.Status.TRANSFORMING))
                 throw new BaseException(MessageConstant.VIDEO_TRANSFORMING);
-            createTransformTask(updateVideoDTO.getVideoGroupId(), updateVideoDTO.getId(), originPath);
+            createTransformTask(updateVideoDTO.getVideoGroupId(), updateVideoDTO.getId(), originPath, "videoServiceImpl.videoTransformCbWillFinish");
         }
 
         var coverUrl = updateVideoDTO.getCover();
