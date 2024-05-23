@@ -6,6 +6,7 @@ import com.abdecd.moebackend.business.pojo.dto.video.VideoTransformCbArgs;
 import com.abdecd.moebackend.business.pojo.dto.video.VideoTransformTask;
 import com.abdecd.moebackend.common.constant.RedisConstant;
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,9 @@ public class AliVideoTransformer implements VideoTransformer {
     private RedisTemplate<String, VideoTransformTask> redisTemplate;
     @Autowired
     private AliImmManager aliImmManager;
+    @Autowired
+    private RedissonClient redissonClient;
+
     private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
 
     public void transform(VideoTransformTask task, int ttlSeconds, String username) {
@@ -64,20 +68,41 @@ public class AliVideoTransformer implements VideoTransformer {
     }
 
     public void transformCb(String taskId, VideoTransformTask.TaskType taskType) {
-        // 用回调的taskId找到对应的task对象，使用反射触发回调
-        var task = redisTemplate.opsForValue().get(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + taskId);
-        if (task == null) return;
+        videoTransformCb(new VideoTransformCbArgs(taskId, taskType, VideoTransformCbArgs.Status.SUCCESS));
+    }
+
+    public void videoTransformCb(VideoTransformCbArgs cbArgs) {
+        var lock = redissonClient.getLock(RedisConstant.VIDEO_TRANSFORM_TASK_CB_LOCK + cbArgs.getTaskId());
+        lock.lock();
+        log.info("videoTransformCb:" + cbArgs);
+        try {
+            if (cbArgs.getStatus().equals(VideoTransformCbArgs.Status.SUCCESS)) {
+                var task = redisTemplate.opsForValue().get(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + cbArgs.getTaskId());
+                if (task != null) {
+                    // 更改状态并保存
+                    task.getStatus()[cbArgs.getType().NUM] = VideoTransformTask.Status.SUCCESS;
+                    redisTemplate.opsForValue().set(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + cbArgs.getTaskId(), task);
+                    // 检验状态并调用结束任务
+                    for (var status : task.getStatus()) {
+                        if (status == VideoTransformTask.Status.WAITING) return;
+                    }
+                    videoTransformCbWillFinish(task);
+                }
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void videoTransformCbWillFinish(VideoTransformTask task) {
+        // 使用反射触发回调
         var strs = task.getCbBeanNameAndMethodName().split("\\.");
         var bean = SpringContextUtil.getBean(strs[0]);
         try {
-            Method method = bean.getClass().getDeclaredMethod(strs[1], VideoTransformCbArgs.class);
-            method.invoke(bean, new VideoTransformCbArgs(
-                    taskId,
-                    taskType,
-                    VideoTransformCbArgs.Status.SUCCESS)
-            );
+            Method method = bean.getClass().getDeclaredMethod(strs[1], VideoTransformTask.class);
+            method.invoke(bean, task);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-    }
+   }
 }

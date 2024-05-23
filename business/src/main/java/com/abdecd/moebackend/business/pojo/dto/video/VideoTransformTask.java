@@ -14,7 +14,7 @@ public class VideoTransformTask {
 
     /**
      * 回调函数名称 例如 videoServiceImpl.addVideo
-     * @回调函数需要有唯一参数VideoTransformCbArgs
+     * @回调函数需要有唯一参数VideoTransformTask
      */
     private String cbBeanNameAndMethodName;
 

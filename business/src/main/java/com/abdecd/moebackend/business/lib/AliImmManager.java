@@ -57,7 +57,7 @@ public class AliImmManager {
                 .setContent(username)
                 .setFontSize(fontSizeMap.get(widthAndHeight))
                 .setFontColor("#ffffff")
-                .setFontApha(0.4F);
+                .setFontApha(0.7F);
         com.aliyun.imm20200930.models.TargetVideo.TargetVideoFilterVideo targets0TargetVideoFilterVideo = new com.aliyun.imm20200930.models.TargetVideo.TargetVideoFilterVideo()
                 .setWatermarks(java.util.Arrays.asList(
                     targets0TargetVideoFilterVideoWatermarks0

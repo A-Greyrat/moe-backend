@@ -13,7 +13,6 @@ import com.abdecd.moebackend.business.lib.BiliParser;
 import com.abdecd.moebackend.business.lib.ResourceLinkHandler;
 import com.abdecd.moebackend.business.pojo.dto.video.AddVideoDTO;
 import com.abdecd.moebackend.business.pojo.dto.video.UpdateVideoDTO;
-import com.abdecd.moebackend.business.pojo.dto.video.VideoTransformCbArgs;
 import com.abdecd.moebackend.business.pojo.dto.video.VideoTransformTask;
 import com.abdecd.moebackend.business.pojo.vo.video.VideoSrcVO;
 import com.abdecd.moebackend.business.pojo.vo.video.VideoVO;
@@ -26,7 +25,6 @@ import com.abdecd.tokenlogin.common.context.UserContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RedissonClient;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -63,8 +61,6 @@ public class VideoServiceImpl implements VideoService {
     private ResourceLinkHandler resourceLinkHandler;
     @Autowired
     private FileService fileService;
-    @Autowired
-    private RedissonClient redissonClient;
     private final ScheduledExecutorService scheduledExecutor = Executors.newSingleThreadScheduledExecutor();
     @Autowired
     private BiliParser biliParser;
@@ -152,7 +148,7 @@ public class VideoServiceImpl implements VideoService {
                         "video-group/" + videoGroupId + "/" + videoId + "/1080p.mp4"
                 })
                 .setStatus(new VideoTransformTask.Status[]{VideoTransformTask.Status.WAITING, VideoTransformTask.Status.WAITING, VideoTransformTask.Status.WAITING})
-                .setCbBeanNameAndMethodName("videoServiceImpl.videoTransformCb");
+                .setCbBeanNameAndMethodName("videoServiceImpl.videoTransformCbWillFinish");
         // 保存任务
         redisTemplate.opsForValue().set(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + task.getId(), task, TRANSFORM_TASK_REDIS_TTL, TimeUnit.SECONDS);
         stringRedisTemplate.opsForValue().set(RedisConstant.VIDEO_TRANSFORM_TASK_VIDEO_ID + task.getVideoId(), task.getId(), TRANSFORM_TASK_REDIS_TTL, TimeUnit.SECONDS);
@@ -173,29 +169,6 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @SuppressWarnings("unused")
-    public void videoTransformCb(VideoTransformCbArgs cbArgs) {
-        var lock = redissonClient.getLock(RedisConstant.VIDEO_TRANSFORM_TASK_CB_LOCK + cbArgs.getTaskId());
-        lock.lock();
-        log.info("videoTransformCb:" + cbArgs);
-        try {
-            if (cbArgs.getStatus().equals(VideoTransformCbArgs.Status.SUCCESS)) {
-                var task = redisTemplate.opsForValue().get(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + cbArgs.getTaskId());
-                if (task != null) {
-                    // 更改状态并保存
-                    task.getStatus()[cbArgs.getType().NUM] = VideoTransformTask.Status.SUCCESS;
-                    redisTemplate.opsForValue().set(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + cbArgs.getTaskId(), task);
-                    // 检验状态并调用结束任务
-                    for (var status : task.getStatus()) {
-                        if (status == VideoTransformTask.Status.WAITING) return;
-                    }
-                    videoTransformCbWillFinish(task);
-                }
-            }
-        } finally {
-            lock.unlock();
-        }
-    }
-
     public void videoTransformCbWillFinish(VideoTransformTask task) {
         redisTemplate.delete(RedisConstant.VIDEO_TRANSFORM_TASK_PREFIX + task.getId());
         stringRedisTemplate.delete(RedisConstant.VIDEO_TRANSFORM_TASK_VIDEO_ID + task.getVideoId());

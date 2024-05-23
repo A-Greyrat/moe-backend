@@ -1,11 +1,13 @@
 package com.abdecd.moebackend.business.controller.base;
 
+import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.plainuser.AddHistoryDTO;
 import com.abdecd.moebackend.business.pojo.vo.video.VideoVO;
 import com.abdecd.moebackend.business.service.BangumiIndexService;
 import com.abdecd.moebackend.business.service.plainuser.PlainUserHistoryService;
 import com.abdecd.moebackend.business.service.statistic.StatisticService;
 import com.abdecd.moebackend.business.service.video.VideoService;
+import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.result.Result;
 import com.abdecd.tokenlogin.common.context.UserContext;
 import io.swagger.v3.oas.annotations.Operation;
@@ -64,6 +66,7 @@ public class VideoController {
     @GetMapping("")
     public CompletableFuture<Result<VideoVO>> getVideo(@RequestParam Long id) {
         var video = videoService.getVideo(id);
+        if (video == null) throw new BaseException(MessageConstant.VIDEO_NOT_FOUND);
         // 添加观看历史记录
         var userId = UserContext.getUserId();
         if (userId != null) executor.submit(() -> plainUserHistoryService.addHistory(new AddHistoryDTO(userId, id)));
