@@ -133,11 +133,8 @@ public class ElasticSearchService {
                             .missing(1.)
                         ))
                         .query(q1 -> q1.bool(b -> b
-                            .should(b1 -> b1.matchPhrase(b2 -> b2.field("title").query(keyword).slop(10).boost(2F)))
-                            .should(b1 -> b1.matchPhrase(b2 -> b2.field("uploaderName").query(keyword).slop(1)))
                             .should(b1 -> b1.term(b2 -> b2.field("tags").value(keyword)))
-                            .should(b1 -> b1.match(b2 -> b2.field("tags_text").query(keyword)))
-                            .should(b1 -> b1.term(b2 -> b2.field("year").value(keyword).boost(10F)))))
+                            .should(b1 -> b1.match(b2 -> b2.field("tags_text").query(keyword)))))
                     )
                 )
                 .fields(f -> f.field("id"))

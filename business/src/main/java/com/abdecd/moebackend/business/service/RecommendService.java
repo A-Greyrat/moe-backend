@@ -82,7 +82,7 @@ public class RecommendService {
     public List<VideoGroupWithDataVO> getRelated(Long videoGroupId, int num) {
         var vg = videoGroupServiceBase.getVideoGroupInfo(videoGroupId);
         if (vg == null) return new ArrayList<>();
-        var result = elasticSearchService.searchRelated(vg.getTags().replaceAll(";"," "), 1, num);
+        var result = elasticSearchService.searchRelated(vg.getTags().replaceAll(";"," "), 1, num + 1);
         if (result.getTotal() == 0) return new ArrayList<>();
         return new ArrayList<>(result.getRecords().stream()
                 .filter(r -> !Objects.equals(r.getVideoGroupVO().getId(), videoGroupId))
