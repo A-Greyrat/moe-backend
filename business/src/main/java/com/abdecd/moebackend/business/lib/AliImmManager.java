@@ -66,7 +66,7 @@ public class AliImmManager {
                 .setResolution(widthAndHeight)
                 .setCodec("h264")
                 .setAdaptiveResolutionDirection(true)
-                .setCRF(18F);
+                .setCRF(28F);
         com.aliyun.imm20200930.models.TargetVideo targets0TargetVideo = new com.aliyun.imm20200930.models.TargetVideo()
                 .setDisableVideo(false)
                 .setTranscodeVideo(targets0TargetVideoTranscodeVideo)
