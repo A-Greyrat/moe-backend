@@ -2,6 +2,7 @@ package com.abdecd.moebackend.business.controller.backstage;
 
 import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.dao.entity.BangumiTimeTable;
+import com.abdecd.moebackend.business.dao.entity.Danmaku;
 import com.abdecd.moebackend.business.dao.entity.Video;
 import com.abdecd.moebackend.business.dao.entity.VideoSrc;
 import com.abdecd.moebackend.common.result.Result;
@@ -138,5 +139,13 @@ public class DangerousController {
     public Result<String> deleteBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
         Db.removeByIds(bangumiVideoGroups.stream().map(com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup::getVideoGroupId).toList(), com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup.class);
         return Result.success();
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "导入弹幕")
+    @PostMapping("danmaku/import")
+    public Result<List<Long>> importDanmaku(@RequestBody List<Danmaku> list) {
+        Db.saveBatch(list);
+        return Result.success(list.stream().map(Danmaku::getId).toList());
     }
 }
