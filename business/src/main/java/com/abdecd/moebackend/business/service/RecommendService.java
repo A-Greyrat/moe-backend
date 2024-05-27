@@ -56,7 +56,9 @@ public class RecommendService {
         var old = getCarouselIds();
         if (old.size() + ids.length > 20) throw new BaseException(MessageConstant.CAROUSEL_SIZE_LIMIT);
         for (long id : ids) if (old.contains(id)) throw new BaseException(MessageConstant.CAROUSEL_EXIST_LIMIT);
-        old.addAll(index, Arrays.stream(ids).boxed().toList());
+        if (index < old.size()) {
+            old.addAll(index, Arrays.stream(ids).boxed().toList());
+        } else old.addAll(Arrays.stream(ids).boxed().toList());
         stringRedisTemplate.opsForValue().set(RedisConstant.RECOMMEND_CAROUSEL, String.join(";", old.stream().map(String::valueOf).toArray(String[]::new)));
     }
 
