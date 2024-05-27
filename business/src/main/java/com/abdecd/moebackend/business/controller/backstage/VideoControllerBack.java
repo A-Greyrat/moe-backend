@@ -59,12 +59,6 @@ public class VideoControllerBack {
             id = videoService.addVideo(addVideoDTO, addVideoDTO.getVideoStatusWillBe());
         }
         if (Objects.equals(videoGroupServiceBase.getVideoGroupType(addVideoDTO.getVideoGroupId()), VideoGroup.Type.ANIME_VIDEO_GROUP)) {
-            if (addVideoDTO.getVideoStatusWillBe().equals(Video.Status.ENABLE)) {
-                bangumiVideoGroupMapper.update(new LambdaUpdateWrapper<BangumiVideoGroup>()
-                        .eq(BangumiVideoGroup::getVideoGroupId, addVideoDTO.getVideoGroupId())
-                        .set(BangumiVideoGroup::getUpdateTime, LocalDateTime.now())
-                );
-            }
             if (
                     Objects.equals(addVideoDTO.getVideoStatusWillBe(), Video.Status.PRELOAD)
                             && addVideoDTO.getVideoPublishTime() != null
@@ -74,6 +68,12 @@ public class VideoControllerBack {
                         .setVideoGroupId(addVideoDTO.getVideoGroupId())
                         .setUpdateTime(addVideoDTO.getVideoPublishTime())
                         .setStatus(StatusConstant.ENABLE)
+                );
+            }
+            if (Objects.equals(addVideoDTO.getVideoStatusWillBe(), Video.Status.ENABLE)) {
+                bangumiVideoGroupMapper.update(new LambdaUpdateWrapper<BangumiVideoGroup>()
+                        .eq(BangumiVideoGroup::getVideoGroupId, addVideoDTO.getVideoGroupId())
+                        .set(BangumiVideoGroup::getUpdateTime, LocalDateTime.now())
                 );
             }
         }

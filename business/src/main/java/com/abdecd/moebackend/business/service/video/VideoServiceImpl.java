@@ -81,13 +81,6 @@ public class VideoServiceImpl implements VideoService {
     public long addVideo(AddVideoDTO addVideoDTO, Byte videoStatusWillBe) {
         checkUserHaveTheGroup(addVideoDTO.getVideoGroupId());
 
-        var originPath = resourceLinkHandler.getRawPathFromTmpVideoLink(addVideoDTO.getLink());
-        // 链接合法性检查 不是bv就正常检查
-        if (!bvPattern.matcher(addVideoDTO.getLink()).find()) {
-            if (!originPath.startsWith("tmp/user" + UserContext.getUserId() + "/"))
-                throw new BaseException(MessageConstant.INVALID_FILE_PATH);
-        }
-
         var entity = addVideoDTO.toEntity();
         videoMapper.insert(entity);
 
@@ -105,14 +98,22 @@ public class VideoServiceImpl implements VideoService {
             throw new BaseException(MessageConstant.INVALID_FILE_PATH);
         }
         // 链接处理
-        if (bvPattern.matcher(addVideoDTO.getLink()).find()) {
-            videoMapper.updateById(entity.setStatus(videoStatusWillBe));
-            videoSrcMapper.insert(new VideoSrc().setVideoId(entity.getId()).setSrcName("720p").setSrc(addVideoDTO.getLink()));
-        } else if (Objects.equals(videoStatusWillBe, Video.Status.ENABLE)) {
-            createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformEnableCb", "videoServiceImpl.videoTransformFailCb");
-        } else if (Objects.equals(videoStatusWillBe, Video.Status.PRELOAD)) {
-            createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformPreloadCb", "videoServiceImpl.videoTransformFailCb");
-        } else throw new BaseException(MessageConstant.ARG_ERROR);
+        if (addVideoDTO.getLink() != null && !addVideoDTO.getLink().isEmpty()) {
+            var originPath = resourceLinkHandler.getRawPathFromTmpVideoLink(addVideoDTO.getLink());
+            // 链接合法性检查 不是bv就正常检查
+            if (!bvPattern.matcher(addVideoDTO.getLink()).find()) {
+                if (!originPath.startsWith("tmp/user" + UserContext.getUserId() + "/"))
+                    throw new BaseException(MessageConstant.INVALID_FILE_PATH);
+            }
+            if (bvPattern.matcher(addVideoDTO.getLink()).find()) {
+                videoMapper.updateById(entity.setStatus(videoStatusWillBe));
+                videoSrcMapper.insert(new VideoSrc().setVideoId(entity.getId()).setSrcName("720p").setSrc(addVideoDTO.getLink()));
+            } else if (Objects.equals(videoStatusWillBe, Video.Status.ENABLE)) {
+                createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformEnableCb", "videoServiceImpl.videoTransformFailCb");
+            } else if (Objects.equals(videoStatusWillBe, Video.Status.PRELOAD)) {
+                createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformPreloadCb", "videoServiceImpl.videoTransformFailCb");
+            } else throw new BaseException(MessageConstant.ARG_ERROR);
+        }
 
         return entity.getId();
     }
@@ -126,25 +127,26 @@ public class VideoServiceImpl implements VideoService {
     public long addVideoWithCoverResolved(AddVideoDTO addVideoDTO, Byte videoStatusWillBe) {
         checkUserHaveTheGroup(addVideoDTO.getVideoGroupId());
 
-        var originPath = resourceLinkHandler.getRawPathFromTmpVideoLink(addVideoDTO.getLink());
-        // 链接合法性检查 不是bv就正常检查
-        if (!bvPattern.matcher(addVideoDTO.getLink()).find()) {
-            if (!originPath.startsWith("tmp/user" + UserContext.getUserId() + "/"))
-                throw new BaseException(MessageConstant.INVALID_FILE_PATH);
-        }
-
         var entity = addVideoDTO.toEntity();
         videoMapper.insert(entity);
 
         // 链接处理
-        if (bvPattern.matcher(addVideoDTO.getLink()).find()) {
-            videoMapper.updateById(entity.setStatus(videoStatusWillBe));
-            videoSrcMapper.insert(new VideoSrc().setVideoId(entity.getId()).setSrcName("720p").setSrc(addVideoDTO.getLink()));
-        } else if (Objects.equals(videoStatusWillBe, Video.Status.ENABLE)) {
-            createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformEnableCb", "videoServiceImpl.videoTransformFailCb");
-        } else if (Objects.equals(videoStatusWillBe, Video.Status.PRELOAD)) {
-            createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformPreloadCb", "videoServiceImpl.videoTransformFailCb");
-        } else throw new BaseException(MessageConstant.ARG_ERROR);
+        if (addVideoDTO.getLink() != null && !addVideoDTO.getLink().isEmpty()) {
+            var originPath = resourceLinkHandler.getRawPathFromTmpVideoLink(addVideoDTO.getLink());
+            // 链接合法性检查 不是bv就正常检查
+            if (!bvPattern.matcher(addVideoDTO.getLink()).find()) {
+                if (!originPath.startsWith("tmp/user" + UserContext.getUserId() + "/"))
+                    throw new BaseException(MessageConstant.INVALID_FILE_PATH);
+            }
+            if (bvPattern.matcher(addVideoDTO.getLink()).find()) {
+                videoMapper.updateById(entity.setStatus(videoStatusWillBe));
+                videoSrcMapper.insert(new VideoSrc().setVideoId(entity.getId()).setSrcName("720p").setSrc(addVideoDTO.getLink()));
+            } else if (Objects.equals(videoStatusWillBe, Video.Status.ENABLE)) {
+                createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformEnableCb", "videoServiceImpl.videoTransformFailCb");
+            } else if (Objects.equals(videoStatusWillBe, Video.Status.PRELOAD)) {
+                createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformPreloadCb", "videoServiceImpl.videoTransformFailCb");
+            } else throw new BaseException(MessageConstant.ARG_ERROR);
+        }
 
         return entity.getId();
     }

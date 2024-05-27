@@ -20,8 +20,7 @@ public class AddVideoDTO {
     @NotBlank
     String description;
     String cover;
-    @NotBlank
-    String link;
+    String link = "";
 
     public Video toEntity() {
         return new Video()
