@@ -1,5 +1,6 @@
 package com.abdecd.moebackend.business.controller.base;
 
+import com.abdecd.moebackend.business.common.util.HttpCacheUtils;
 import com.abdecd.moebackend.business.dao.entity.PlainUserDetail;
 import com.abdecd.moebackend.business.pojo.dto.plainuser.UpdatePlainUserDTO;
 import com.abdecd.moebackend.business.service.plainuser.PlainUserService;
@@ -7,9 +8,14 @@ import com.abdecd.moebackend.common.result.Result;
 import com.abdecd.tokenlogin.common.context.UserContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "普通用户接口")
 @RestController
@@ -20,9 +26,15 @@ public class PlainUserController {
 
     @Operation(summary = "获取用户信息")
     @GetMapping("")
-    public Result<PlainUserDetail> getUserInfo(Long uid) {
+    public Result<PlainUserDetail> getUserInfo(
+            Long uid,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         if (uid == null) uid = UserContext.getUserId();
-        return Result.success(plainUserService.getPlainUserDetail(uid));
+        var vo = plainUserService.getPlainUserDetail(uid);
+        if (HttpCacheUtils.tryUseCache(request, response, vo)) return null;
+        return Result.success(vo);
     }
 
     @Operation(summary = "修改用户信息")

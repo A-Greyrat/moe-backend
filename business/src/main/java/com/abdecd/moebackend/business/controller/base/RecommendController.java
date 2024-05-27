@@ -46,12 +46,8 @@ public class RecommendController {
     @GetMapping("related")
     public Result<List<VideoGroupWithDataVO>> getRelatedList(
             @RequestParam Long id,
-            @RequestParam(defaultValue = "10") @Min(1) @Max(20) int num,
-            HttpServletRequest request,
-            HttpServletResponse response
+            @RequestParam(defaultValue = "10") @Min(1) @Max(20) int num
     ) {
-        var vo = recommendService.getRelated(id, num);
-        if (HttpCacheUtils.tryUseCache(request, response, vo)) return null;
-        return Result.success(vo);
+        return Result.success(recommendService.getRelated(id, num));
     }
 }

@@ -1,6 +1,7 @@
 package com.abdecd.moebackend.business.controller.base;
 
 import com.abdecd.moebackend.business.common.exception.BaseException;
+import com.abdecd.moebackend.business.common.util.HttpCacheUtils;
 import com.abdecd.moebackend.business.pojo.dto.plainuser.AddHistoryDTO;
 import com.abdecd.moebackend.business.pojo.vo.video.VideoVO;
 import com.abdecd.moebackend.business.service.plainuser.PlainUserHistoryService;
@@ -10,6 +11,8 @@ import com.abdecd.moebackend.common.result.Result;
 import com.abdecd.tokenlogin.common.context.UserContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,12 +61,18 @@ public class VideoController {
     @Async
     @Operation(summary = "获取视频")
     @GetMapping("")
-    public CompletableFuture<Result<VideoVO>> getVideo(@RequestParam Long id) {
+    public CompletableFuture<Result<VideoVO>> getVideo(
+            @RequestParam Long id,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
         var video = videoService.getVideo(id);
         if (video == null) throw new BaseException(MessageConstant.VIDEO_NOT_FOUND);
         // 添加观看历史记录
         var userId = UserContext.getUserId();
         if (userId != null) executor.submit(() -> plainUserHistoryService.addHistory(new AddHistoryDTO(userId, id)));
+
+        if (HttpCacheUtils.tryUseCache(request, response, video)) return null;
         return CompletableFuture.completedFuture(Result.success(video));
     }
 }
