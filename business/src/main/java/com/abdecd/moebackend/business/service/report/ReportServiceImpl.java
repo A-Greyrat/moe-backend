@@ -130,10 +130,12 @@ public class ReportServiceImpl implements ReportService {
             UserCommentVO userCommentVO = new UserCommentVO();
 
             PlainUserDetail user = plainUserDetailMapper.selectByUid(userComment.getUserId());
+            if (user == null) continue;
 
             userCommentVO.setTimestamp(userComment.getTimestamp());
             userCommentVO.setId(userComment.getId());
             userCommentVO.setContent(userComment.getContent());
+            userCommentVO.setToId(userComment.getToId());
 
             UserCommentVOBasic.UserDetail userDetail1 = new UserCommentVOBasic.UserDetail();
             userDetail1.setAvatar(user.getAvatar());
@@ -141,17 +143,17 @@ public class ReportServiceImpl implements ReportService {
             userDetail1.setId(Math.toIntExact(user.getUserId()));
             userCommentVO.setUserDetail(userDetail1);
 
-            if (userComment.getToId() == -1L) {
-                userCommentVO.setToId(-1L);
-            } else {
-                PlainUserDetail touser = plainUserDetailMapper.selectByUid(userComment.getToId());
-                userCommentVO.setToId(userComment.getToId());
+            if (userComment.getToId() != -1L) {
+                var comment2 = userCommentMapper.selectById(userComment.getToId());
+                if (comment2 != null) {
+                    PlainUserDetail touser = plainUserDetailMapper.selectByUid(comment2.getUserId());
 
-                UserCommentVOBasic.UserDetail userDetail2 = new UserCommentVOBasic.UserDetail();
-                userDetail2.setAvatar(touser.getAvatar());
-                userDetail2.setNickname(touser.getNickname());
-                userDetail2.setId(Math.toIntExact(touser.getUserId()));
-                userCommentVO.setToUserDetail(userDetail2);
+                    UserCommentVOBasic.UserDetail userDetail2 = new UserCommentVOBasic.UserDetail();
+                    userDetail2.setAvatar(touser.getAvatar());
+                    userDetail2.setNickname(touser.getNickname());
+                    userDetail2.setId(Math.toIntExact(touser.getUserId()));
+                    userCommentVO.setToUserDetail(userDetail2);
+                }
             }
 
             reportCommentVO.setComment(userCommentVO);

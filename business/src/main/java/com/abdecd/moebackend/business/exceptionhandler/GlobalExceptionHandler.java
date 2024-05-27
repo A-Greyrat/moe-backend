@@ -66,6 +66,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public Result<String> exceptionHandler(Exception ex) {
         log.error("未知异常信息：{}", ex.toString());
+        ex.printStackTrace();
         return Result.error(500, MessageConstant.UNKNOWN_ERROR);
     }
 
@@ -101,6 +102,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public Result<String> nullPointerExceptionHandler(NullPointerException ex) {
         log.error("异常信息：{}", ex.toString());
+        ex.printStackTrace();
         return Result.error(500, "信息不全");
     }
 }
