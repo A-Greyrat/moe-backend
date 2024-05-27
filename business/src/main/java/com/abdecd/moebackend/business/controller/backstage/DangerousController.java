@@ -5,22 +5,32 @@ import com.abdecd.moebackend.business.dao.entity.BangumiTimeTable;
 import com.abdecd.moebackend.business.dao.entity.Danmaku;
 import com.abdecd.moebackend.business.dao.entity.Video;
 import com.abdecd.moebackend.business.dao.entity.VideoSrc;
+import com.abdecd.moebackend.business.service.ElasticSearchService;
+import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
 import com.abdecd.moebackend.common.result.Result;
 import com.abdecd.tokenlogin.aspect.RequirePermission;
 import com.baomidou.mybatisplus.extension.toolkit.Db;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Tag(name = "危险接口")
 @RestController
 @RequestMapping("/backstage/dangerous")
 public class DangerousController {
+    @Autowired
+    private ElasticSearchService elasticSearchService;
+    @Autowired
+    private VideoGroupServiceBase videoGroupServiceBase;
+
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频")
     @PostMapping("video/add")
@@ -106,6 +116,11 @@ public class DangerousController {
     @PostMapping("video-group/add")
     public Result<List<Long>> addVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
         Db.saveBatch(videoGroups);
+        try {
+            elasticSearchService.initData(videoGroups.stream().map(x->videoGroupServiceBase.getVideoGroupInfo(x.getId())).collect(Collectors.toList()));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return Result.success(videoGroups.stream().map(com.abdecd.moebackend.business.dao.entity.VideoGroup::getId).toList());
     }
 

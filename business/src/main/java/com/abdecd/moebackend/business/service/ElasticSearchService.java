@@ -29,6 +29,7 @@ public class ElasticSearchService {
         List<BulkOperation> operations = new ArrayList<>();
         // 插入视频组
         for (var videoGroupVO : videoGroups) {
+            if (videoGroupVO == null) continue;
             if (!esClient.exists(g -> g
                     .index(ElasticSearchConstant.INDEX_NAME)
                     .id(videoGroupVO.getId().toString())
