@@ -91,4 +91,52 @@ public class DangerousController {
         Db.removeByIds(bangumiTimeTables.stream().map(BangumiTimeTable::getId).toList(), BangumiTimeTable.class);
         return Result.success();
     }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "更新视频组")
+    @PostMapping("video-group/update")
+    public Result<String> updateVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
+        Db.updateBatchById(videoGroups);
+        return Result.success();
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "添加视频组")
+    @PostMapping("video-group/add")
+    public Result<String> addVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
+        Db.saveBatch(videoGroups);
+        return Result.success();
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "删除视频组")
+    @PostMapping("video-group/delete")
+    public Result<String> deleteVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
+        Db.removeByIds(videoGroups.stream().map(com.abdecd.moebackend.business.dao.entity.VideoGroup::getId).toList(), com.abdecd.moebackend.business.dao.entity.VideoGroup.class);
+        return Result.success();
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "更新番剧视频组")
+    @PostMapping("bangumi-video-group/update")
+    public Result<String> updateBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
+        Db.updateBatchById(bangumiVideoGroups);
+        return Result.success();
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "添加番剧视频组")
+    @PostMapping("bangumi-video-group/add")
+    public Result<String> addBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
+        Db.saveBatch(bangumiVideoGroups);
+        return Result.success();
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "删除番剧视频组")
+    @PostMapping("bangumi-video-group/delete")
+    public Result<String> deleteBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
+        Db.removeByIds(bangumiVideoGroups.stream().map(com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup::getVideoGroupId).toList(), com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup.class);
+        return Result.success();
+    }
 }
