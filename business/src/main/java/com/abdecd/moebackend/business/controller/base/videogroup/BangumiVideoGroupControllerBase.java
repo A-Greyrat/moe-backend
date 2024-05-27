@@ -1,5 +1,6 @@
 package com.abdecd.moebackend.business.controller.base.videogroup;
 
+import com.abdecd.moebackend.business.common.util.HttpCacheUtils;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.BangumiVideoGroupTimeScheduleVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.BangumiVideoGroupVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.ContentsItemVO;
@@ -7,6 +8,8 @@ import com.abdecd.moebackend.business.service.videogroup.BangumiVideoGroupServic
 import com.abdecd.moebackend.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +41,13 @@ public class BangumiVideoGroupControllerBase {
 
     @Operation(summary = "获取新番时间表")
     @GetMapping("time-schedule")
-    public Result<List<BangumiVideoGroupTimeScheduleVO>> getTimeSchedule(@RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate date) {
-        return Result.success(bangumiVideoGroupServiceBase.getTimeSchedule(date));
+    public Result<List<BangumiVideoGroupTimeScheduleVO>> getTimeSchedule(
+            @RequestParam @DateTimeFormat(pattern = "yyyyMMdd") LocalDate date,
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) {
+        var vo = bangumiVideoGroupServiceBase.getTimeSchedule(date);
+        if (HttpCacheUtils.tryUseCache(request, response, vo)) return null;
+        return Result.success(vo);
     }
 }

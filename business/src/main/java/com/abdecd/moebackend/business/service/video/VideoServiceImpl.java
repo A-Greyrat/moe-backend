@@ -175,6 +175,11 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @SuppressWarnings("unused")
+    @Caching(evict = {
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
+            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId")
+    })
     public void videoTransformFailCb(VideoTransformTask task) {
         videoMapper.deleteById(task.getVideoId());
     }
