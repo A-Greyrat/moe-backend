@@ -6,6 +6,7 @@ import com.abdecd.moebackend.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -84,6 +85,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public Result<String> exceptionHandler(MethodArgumentTypeMismatchException ex) {
+        log.error("异常信息：{}", ex.toString());
+        return Result.error(MessageConstant.ARG_ERROR);
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(MissingServletRequestParameterException ex) {
         log.error("异常信息：{}", ex.toString());
         return Result.error(MessageConstant.ARG_ERROR);
     }
