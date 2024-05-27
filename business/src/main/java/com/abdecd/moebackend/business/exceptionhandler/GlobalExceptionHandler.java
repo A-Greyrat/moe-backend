@@ -65,13 +65,6 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler
-    public Result<String> exceptionHandler(Exception ex) {
-        log.error("未知异常信息：{}", ex.toString());
-        ex.printStackTrace();
-        return Result.error(500, MessageConstant.UNKNOWN_ERROR);
-    }
-
-    @ExceptionHandler
     public Result<String> exceptionHandler(MultipartException ex) {
         log.error("异常信息：{}", ex.toString());
         return Result.error(MessageConstant.MULTIPART_EXCEPTION);

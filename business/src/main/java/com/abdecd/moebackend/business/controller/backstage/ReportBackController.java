@@ -10,6 +10,8 @@ import com.abdecd.moebackend.common.result.Result;
 import com.abdecd.tokenlogin.aspect.RequirePermission;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +33,7 @@ public class ReportBackController {
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "查看视频举报")
     @GetMapping("/video")
-    public Result<ReportVideoTotalVO> getVideoReport(@Valid @RequestParam("page") Integer page, @Valid @RequestParam("pageSize") Integer pageSize) {
+    public Result<ReportVideoTotalVO> getVideoReport(@Valid @RequestParam("page") @Min(1) Integer page, @Valid @RequestParam("pageSize") @Min(1) @Max(200) Integer pageSize) {
         ReportVideoTotalVO reportVideoTotalVO = reportService.getReportVideoVO(page, pageSize);
         return Result.success(reportVideoTotalVO);
     }
@@ -39,7 +41,7 @@ public class ReportBackController {
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "查看评论举报")
     @GetMapping("/comment")
-    public Result<ReportCommentTotalVO> getCommentReport(@Valid @RequestParam("page") Integer page, @Valid @RequestParam("pageSize") Integer pageSize) {
+    public Result<ReportCommentTotalVO> getCommentReport(@Valid @RequestParam("page") @Min(1) Integer page, @Valid @RequestParam("pageSize") @Min(1) @Max(200) Integer pageSize) {
         ReportCommentTotalVO reportCommentTotalVO = reportService.getReportCommentVO(page, pageSize);
         return Result.success(reportCommentTotalVO);
     }
