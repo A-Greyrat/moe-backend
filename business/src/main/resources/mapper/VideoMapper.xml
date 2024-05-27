@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.abdecd.moebackend.business.dao.mapper.VideoMapper">
+    <resultMap id="videoWithMany" type="com.abdecd.moebackend.business.pojo.vo.video.VideoForceWithWillUpdateTimeVO" autoMapping="true">
+        <id column="id" property="id"/>
+        <collection property="src" ofType="com.abdecd.moebackend.business.pojo.vo.video.VideoSrcVO" javaType="java.util.ArrayList">
+            <result column="src_name" property="srcName"/>
+            <result column="src" property="src"/>
+        </collection>
+    </resultMap>
+    <select id="getAllVideo"
+            resultMap="videoWithMany">
+        SELECT v.id,
+               v.video_group_id,
+               v.index,
+               v.title,
+               v.description,
+               v.cover,
+               v.upload_time,
+               v.status,
+               btt.update_time as will_update_time,
+               video_src.src,
+               video_src.src_name
+        FROM video v
+            LEFT JOIN moe_main.bangumi_time_table btt on v.id = btt.video_id
+            LEFT JOIN video_src ON v.id = video_src.video_id
+        WHERE v.video_group_id = #{videoGroupId}
+        ORDER BY v.index
+    </select>
+</mapper>

@@ -1,5 +1,6 @@
 package com.abdecd.moebackend.business.pojo.vo.video;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
@@ -8,5 +9,8 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class VideoForceVO extends VideoVO {
-    Byte status;
+    @JsonGetter
+    public Byte getStatus() {
+        return status;
+    }
 }

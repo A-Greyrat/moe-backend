@@ -113,6 +113,8 @@ public class VideoServiceImpl implements VideoService {
             } else if (Objects.equals(videoStatusWillBe, Video.Status.PRELOAD)) {
                 createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformPreloadCb", "videoServiceImpl.videoTransformFailCb");
             } else throw new BaseException(MessageConstant.ARG_ERROR);
+        } else if (videoStatusWillBe != null) {
+            videoMapper.updateById(entity.setStatus(videoStatusWillBe));
         }
 
         return entity.getId();
@@ -146,6 +148,8 @@ public class VideoServiceImpl implements VideoService {
             } else if (Objects.equals(videoStatusWillBe, Video.Status.PRELOAD)) {
                 createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformPreloadCb", "videoServiceImpl.videoTransformFailCb");
             } else throw new BaseException(MessageConstant.ARG_ERROR);
+        } else if (videoStatusWillBe != null) {
+            videoMapper.updateById(entity.setStatus(videoStatusWillBe));
         }
 
         return entity.getId();
@@ -265,10 +269,6 @@ public class VideoServiceImpl implements VideoService {
         }
 
         var entity = updateVideoDTO.toEntity();
-        if (updateVideoDTO.getLink() == null && videoStatusWillBe != null) {
-            entity.setStatus(videoStatusWillBe);
-        }
-        videoMapper.updateById(entity);
 
         if (updateVideoDTO.getLink() != null) {
             var originPath = resourceLinkHandler.getRawPathFromTmpVideoLink(updateVideoDTO.getLink());
@@ -289,6 +289,8 @@ public class VideoServiceImpl implements VideoService {
             } else if (Objects.equals(videoStatusWillBe, Video.Status.PRELOAD)) {
                 createTransformTask(updateVideoDTO.getVideoGroupId(), updateVideoDTO.getId(), originPath, "videoServiceImpl.videoTransformPreloadCb", "videoServiceImpl.videoTransformFailCb");
             } else throw new BaseException(MessageConstant.ARG_ERROR);
+        } else if (videoStatusWillBe != null) {
+            videoMapper.updateById(entity.setStatus(videoStatusWillBe));
         }
 
         var coverUrl = updateVideoDTO.getCover();
@@ -300,11 +302,13 @@ public class VideoServiceImpl implements VideoService {
                         "cover" + coverUrl.substring(coverUrl.lastIndexOf('.'))
                 );
                 if (cover.isEmpty()) throw new Exception();
-                updateVideoDTO.setCover(cover);
+                entity.setCover(cover);
             } catch (Exception e) {
                 throw new BaseException(MessageConstant.INVALID_FILE_PATH);
             }
         }
+
+        videoMapper.updateById(entity);
     }
 
     @Caching(evict = {
@@ -358,7 +362,7 @@ public class VideoServiceImpl implements VideoService {
         return vo;
     }
 
-    protected void setVideoSrcTo(VideoVO vo) {
+    public void setVideoSrcTo(VideoVO vo) {
         if (Objects.equals(vo.getStatus(), Video.Status.TRANSFORMING)) {
             vo.setSrc(new ArrayList<>(List.of(new VideoSrcVO("1080p", moeProperties.getDefaultVideoPath()))));
         } else {
@@ -428,10 +432,5 @@ public class VideoServiceImpl implements VideoService {
     public void checkUserHaveTheGroup(Long videoGroupId) {
         var videoGroupService = SpringContextUtil.getBean(VideoGroupServiceBase.class);
         videoGroupService.checkUserHaveTheGroup(videoGroupId);
-    }
-
-    @Override
-    public ArrayList<Video> getVideoListByGid(Long videoGroupId) {
-        return videoMapper.selectByGid(videoGroupId);
     }
 }
