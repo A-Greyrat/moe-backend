@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.web.bind.annotation.*;
@@ -59,7 +60,7 @@ public class VideoGroupControllerBase {
     @GetMapping("my-upload-list")
     public Result<PageVO<VideoGroupWithDataVO>> like(
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer pageSize
+            @RequestParam(defaultValue = "10") @Max(200) Integer pageSize
     ) {
         return Result.success(videoGroupServiceBase.pageMyUploadVideoGroup(page, pageSize));
     }

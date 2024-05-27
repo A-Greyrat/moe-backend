@@ -9,6 +9,7 @@ import com.abdecd.moebackend.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,7 @@ public class PlainUserHistoryController {
     @GetMapping("")
     public Result<PageVO<HistoryVO>> getHistory(
             @RequestParam(defaultValue = "0") @Min(0) Integer index,
-            @RequestParam(defaultValue = "10") @Min(1) Integer pageSize
+            @RequestParam(defaultValue = "10") @Min(1) @Max(200) Integer pageSize
     ) {
         return Result.success(plainUserHistoryService.getHistory2(index, pageSize));
     }

@@ -18,4 +18,9 @@ public class Report {
     private String reason;
     private LocalDateTime createTime;
     private Integer status;
+
+    public static class Type {
+        public static final int VIDEO = 0;
+        public static final int COMMENT = 1;
+    }
 }

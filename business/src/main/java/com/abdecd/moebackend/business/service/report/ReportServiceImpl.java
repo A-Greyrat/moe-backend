@@ -1,5 +1,6 @@
 package com.abdecd.moebackend.business.service.report;
 
+import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.dao.entity.PlainUserDetail;
 import com.abdecd.moebackend.business.dao.entity.Report;
 import com.abdecd.moebackend.business.dao.entity.UserComment;
@@ -17,6 +18,7 @@ import com.abdecd.moebackend.business.pojo.vo.report.ReportCommentVO;
 import com.abdecd.moebackend.business.pojo.vo.report.ReportVideoTotalVO;
 import com.abdecd.moebackend.business.pojo.vo.report.ReportVideoVO;
 import com.abdecd.moebackend.business.service.video.VideoService;
+import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.StatusConstant;
 import com.abdecd.tokenlogin.common.context.UserContext;
 import jakarta.annotation.Resource;
@@ -47,6 +49,10 @@ public class ReportServiceImpl implements ReportService {
 
     @Override
     public Long addReport(AddReportDTO addReportDTO) {
+        if (addReportDTO.getType() == Report.Type.VIDEO && videoService.getVideoBase(addReportDTO.getTargetId()) == null)
+            throw new BaseException(MessageConstant.ARG_ERROR);
+        if (addReportDTO.getType() == Report.Type.COMMENT && userCommentMapper.selectById(addReportDTO.getTargetId()) == null)
+            throw new BaseException(MessageConstant.ARG_ERROR);
         Report report = new Report();
         BeanUtils.copyProperties(addReportDTO, report);
         report.setUserId(UserContext.getUserId());

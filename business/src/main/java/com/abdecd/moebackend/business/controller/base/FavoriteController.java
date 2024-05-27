@@ -42,7 +42,7 @@ public class FavoriteController {
     public Result<PageVO<FavoriteVO>> getFavorites(
             @RequestParam @Min(0) @Max(1) Byte type,
             @RequestParam(defaultValue = "1") Integer page,
-            @RequestParam(defaultValue = "10") Integer pageSize
+            @RequestParam(defaultValue = "10") @Max(200) Integer pageSize
     ) {
         if (Objects.equals(type, VideoGroup.Type.PLAIN_VIDEO_GROUP)) {
             return Result.success(favoriteService.getPlainFavorite(UserContext.getUserId(), page, pageSize));
