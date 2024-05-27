@@ -8,6 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -62,6 +63,36 @@ public class GlobalExceptionHandler {
 //        return Result.error(err.getDefaultMessage());
     }
 
+    @ExceptionHandler
+    public Result<String> exceptionHandler(Exception ex) {
+        log.error("未知异常信息：{}", ex.toString());
+        return Result.error(500, MessageConstant.UNKNOWN_ERROR);
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(MultipartException ex) {
+        log.error("异常信息：{}", ex.toString());
+        return Result.error(MessageConstant.MULTIPART_EXCEPTION);
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(IllegalArgumentException ex) {
+        log.error("异常信息：{}", ex.toString());
+        return Result.error(MessageConstant.ARG_ERROR);
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(MethodArgumentTypeMismatchException ex) {
+        log.error("异常信息：{}", ex.toString());
+        return Result.error(MessageConstant.ARG_ERROR);
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(DataIntegrityViolationException ex) {
+        log.error("异常信息：{}", ex.toString());
+        return Result.error(MessageConstant.DB_ERROR);
+    }
+
     /**
      * 实例对象不完整
      * @param ex 异常
@@ -69,31 +100,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler
     public Result<String> nullPointerExceptionHandler(NullPointerException ex) {
-        log.error("异常信息：{}", ex.getMessage());
+        log.error("异常信息：{}", ex.toString());
         return Result.error(500, "信息不全");
-    }
-
-    @ExceptionHandler
-    public Result<String> exceptionHandler(Exception ex) {
-        log.error("异常信息：{}", ex.getMessage());
-        return Result.error(500, MessageConstant.UNKNOWN_ERROR);
-    }
-
-    @ExceptionHandler
-    public Result<String> exceptionHandler(MultipartException ex) {
-        log.error("异常信息：{}", ex.getMessage());
-        return Result.error(MessageConstant.MULTIPART_EXCEPTION);
-    }
-
-    @ExceptionHandler
-    public Result<String> exceptionHandler(IllegalArgumentException ex) {
-        log.error("异常信息：{}", ex.getMessage());
-        return Result.error(MessageConstant.ARG_ERROR);
-    }
-
-    @ExceptionHandler
-    public Result<String> exceptionHandler(DataIntegrityViolationException ex) {
-        log.error("异常信息：{}", ex.getMessage());
-        return Result.error(MessageConstant.DB_ERROR);
     }
 }
