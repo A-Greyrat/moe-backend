@@ -8,8 +8,7 @@
             <result column="src" property="src"/>
         </collection>
     </resultMap>
-    <select id="getAllVideo"
-            resultMap="videoWithMany">
+    <select id="getAllVideo" resultMap="videoWithMany">
         SELECT v.id,
                v.video_group_id,
                v.index,
@@ -26,5 +25,22 @@
             LEFT JOIN video_src ON v.id = video_src.video_id
         WHERE v.video_group_id = #{videoGroupId}
         ORDER BY v.index
+    </select>
+    <select id="getBigVideo" resultMap="videoWithMany">
+        SELECT v.id,
+               v.video_group_id,
+               v.index,
+               v.title,
+               v.description,
+               v.cover,
+               v.upload_time,
+               v.status,
+               btt.update_time as will_update_time,
+               video_src.src,
+               video_src.src_name
+        FROM video v
+                 LEFT JOIN moe_main.bangumi_time_table btt on v.id = btt.video_id
+                 LEFT JOIN video_src ON v.id = video_src.video_id
+        WHERE v.id = #{id}
     </select>
 </mapper>

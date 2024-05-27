@@ -7,11 +7,12 @@ import com.abdecd.moebackend.business.dao.entity.Video;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.BangumiTimeTableMapper;
 import com.abdecd.moebackend.business.dao.mapper.BangumiVideoGroupMapper;
+import com.abdecd.moebackend.business.dao.mapper.VideoMapper;
 import com.abdecd.moebackend.business.pojo.dto.video.AddVideoFullDTO;
 import com.abdecd.moebackend.business.pojo.dto.video.DeleteVideoDTO;
 import com.abdecd.moebackend.business.pojo.dto.video.UpdateManyVideoIndexDTO;
 import com.abdecd.moebackend.business.pojo.dto.video.UpdateVideoFullDTO;
-import com.abdecd.moebackend.business.pojo.vo.video.VideoForceVO;
+import com.abdecd.moebackend.business.pojo.vo.video.VideoForceWithWillUpdateTimeVO;
 import com.abdecd.moebackend.business.service.video.VideoService;
 import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
 import com.abdecd.moebackend.common.constant.MessageConstant;
@@ -44,6 +45,8 @@ public class VideoControllerBack {
     private BangumiTimeTableMapper bangumiTimeTableMapper;
     @Autowired
     private BangumiVideoGroupMapper bangumiVideoGroupMapper;
+    @Autowired
+    private VideoMapper videoMapper;
 
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频")
@@ -139,8 +142,8 @@ public class VideoControllerBack {
     @Async
     @Operation(summary = "获取视频")
     @GetMapping("")
-    public CompletableFuture<Result<VideoForceVO>> getVideo(@RequestParam Long id) {
-        var video = videoService.getVideoForce(id);
+    public CompletableFuture<Result<VideoForceWithWillUpdateTimeVO>> getVideo(@RequestParam Long id) {
+        var video = videoMapper.getBigVideo(id);
         if (video == null) throw new BaseException(MessageConstant.VIDEO_NOT_FOUND);
         return CompletableFuture.completedFuture(Result.success(video));
     }

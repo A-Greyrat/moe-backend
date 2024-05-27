@@ -14,4 +14,5 @@ public interface VideoMapper extends BaseMapper<Video> {
     ArrayList<Video> getByGroupid(Long id);
 
     ArrayList<VideoForceWithWillUpdateTimeVO> getAllVideo(Long videoGroupId);
+    VideoForceWithWillUpdateTimeVO getBigVideo(Long videoGroupId);
 }

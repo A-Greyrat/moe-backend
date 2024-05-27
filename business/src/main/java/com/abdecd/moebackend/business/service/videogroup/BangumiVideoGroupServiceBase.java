@@ -118,7 +118,7 @@ public class BangumiVideoGroupServiceBase {
         if (date.isAfter(LocalDate.now().plusDays(6))) return null;
 
         var objs = bangumiTimeTableMapper.selectList(new LambdaQueryWrapper<BangumiTimeTable>()
-                .gt(BangumiTimeTable::getUpdateTime, date.atStartOfDay())
+                .ge(BangumiTimeTable::getUpdateTime, date.atStartOfDay())
                 .lt(BangumiTimeTable::getUpdateTime, date.plusDays(1).atStartOfDay())
                 .last("ORDER BY update_time ASC limit 20")
         );
