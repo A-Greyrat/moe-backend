@@ -51,7 +51,7 @@
                 AND status = #{status}
             </if>
         </where>
-        ORDER BY create_time DESC
+        ORDER BY id DESC
         LIMIT #{pageIndex}, #{pageSize}
     </select>
 

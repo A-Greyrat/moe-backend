@@ -64,6 +64,7 @@
                 AND vg.id = #{id}
             </if>
         </where>
+        ORDER BY id DESC
         LIMIT #{pageIndex}, #{pageSize}
     </select>
 
