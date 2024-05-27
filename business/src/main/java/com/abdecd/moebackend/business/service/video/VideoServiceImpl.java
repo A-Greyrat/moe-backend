@@ -263,6 +263,9 @@ public class VideoServiceImpl implements VideoService {
         }
 
         var entity = updateVideoDTO.toEntity();
+        if (updateVideoDTO.getLink() == null && videoStatusWillBe != null) {
+            entity.setStatus(videoStatusWillBe);
+        }
         videoMapper.updateById(entity);
 
         if (updateVideoDTO.getLink() != null) {

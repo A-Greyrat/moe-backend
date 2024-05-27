@@ -21,13 +21,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -150,18 +151,21 @@ public class CommonController {
     @Async
     @Operation(summary = "获取 ali 直传所需信息")
     @GetMapping("get-ali-upload-sts")
-    public CompletableFuture<Result<AliStsVO>> getAliUploadSts(@RequestParam @NotBlank String hash) {
+    public CompletableFuture<Result<AliStsVO>> getAliUploadSts(@RequestParam @Pattern(regexp = "^[^\"]+$") String hash) {
+        if (!StringUtils.hasText(hash)) throw new BaseException(MessageConstant.ARG_ERROR);
         // 限流
-        var key = RedisConstant.LIMIT_GET_STS + UserContext.getUserId();
-        if (rateLimiter.isRateLimited(
-                key,
-                RedisConstant.LIMIT_GET_STS_CNT,
-                RedisConstant.LIMIT_GET_STS_RESET_TIME,
-                TimeUnit.MINUTES)
-        ) throw new BaseException(MessageConstant.RATE_LIMIT);
-        // 判断是否可用
-        if (!aliStsManager.getAvailable(UserContext.getUserId()))
-            throw new BaseException(MessageConstant.ALI_STS_NOT_AVAILABLE);
+        if (!UserContext.getPermission().contains("99")) {
+            var key = RedisConstant.LIMIT_GET_STS + UserContext.getUserId();
+            if (rateLimiter.isRateLimited(
+                    key,
+                    RedisConstant.LIMIT_GET_STS_CNT,
+                    RedisConstant.LIMIT_GET_STS_RESET_TIME,
+                    TimeUnit.MINUTES)
+            ) throw new BaseException(MessageConstant.RATE_LIMIT);
+            // 判断是否可用
+            if (!aliStsManager.getAvailable(UserContext.getUserId()))
+                throw new BaseException(MessageConstant.ALI_STS_NOT_AVAILABLE);
+        }
         try {
             var sts = aliStsManager.getSts(UserContext.getUserId(), hash);
             return CompletableFuture.completedFuture(Result.success(new AliStsVO()
