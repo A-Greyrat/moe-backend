@@ -93,6 +93,7 @@ public class ReportServiceImpl implements ReportService {
             );
 
             Video video = videoMapper.selectById(report.getTargetId());
+            if (video == null) continue;
             reportVideoVO.setVideo(videoService.getVideoForce(video.getId()));
 
             reportVideoTotalVO.getRecords().add(reportVideoVO);
