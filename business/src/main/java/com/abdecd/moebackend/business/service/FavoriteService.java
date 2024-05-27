@@ -157,6 +157,7 @@ public class FavoriteService {
 
     @CacheEvict(value = RedisConstant.IS_USER_LIKE, key = "#userId + ':' + #videoGroupId")
     public void addOrDeleteLike(Long userId, Long videoGroupId, Byte status) {
+        if (videoGroupServiceBase.getVideoGroupInfo(videoGroupId) == null) throw new BaseException(MessageConstant.INVALID_VIDEO_GROUP);
         var previous = plainUserLikeMapper.selectOne(new LambdaQueryWrapper<PlainUserLike>()
                 .eq(PlainUserLike::getUserId, userId)
                 .eq(PlainUserLike::getVideoGroupId, videoGroupId)
