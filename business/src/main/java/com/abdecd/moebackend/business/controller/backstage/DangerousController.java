@@ -23,9 +23,9 @@ public class DangerousController {
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频")
     @PostMapping("video/add")
-    public Result<String> addVideo(@RequestBody List<Video> video) {
+    public Result<List<Long>> addVideo(@RequestBody List<Video> video) {
         Db.saveBatch(video);
-        return Result.success();
+        return Result.success(video.stream().map(Video::getId).toList());
     }
 
     @RequirePermission(value = "99", exception = BaseException.class)
@@ -55,9 +55,9 @@ public class DangerousController {
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频源")
     @PostMapping("video-src/add")
-    public Result<String> addVideoSrc(@RequestBody List<VideoSrc> src) {
+    public Result<List<Long>> addVideoSrc(@RequestBody List<VideoSrc> src) {
         Db.saveBatch(src);
-        return Result.success();
+        return Result.success(src.stream().map(VideoSrc::getId).toList());
     }
 
     @RequirePermission(value = "99", exception = BaseException.class)
@@ -79,9 +79,9 @@ public class DangerousController {
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加新番时间表")
     @PostMapping("bangumi/add")
-    public Result<String> addBangumi(@RequestBody List<BangumiTimeTable> bangumiTimeTables) {
+    public Result<List<Long>> addBangumi(@RequestBody List<BangumiTimeTable> bangumiTimeTables) {
         Db.saveBatch(bangumiTimeTables);
-        return Result.success();
+        return Result.success(bangumiTimeTables.stream().map(BangumiTimeTable::getId).toList());
     }
 
     @RequirePermission(value = "99", exception = BaseException.class)
@@ -103,9 +103,9 @@ public class DangerousController {
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频组")
     @PostMapping("video-group/add")
-    public Result<String> addVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
+    public Result<List<Long>> addVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
         Db.saveBatch(videoGroups);
-        return Result.success();
+        return Result.success(videoGroups.stream().map(com.abdecd.moebackend.business.dao.entity.VideoGroup::getId).toList());
     }
 
     @RequirePermission(value = "99", exception = BaseException.class)
@@ -127,9 +127,9 @@ public class DangerousController {
     @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加番剧视频组")
     @PostMapping("bangumi-video-group/add")
-    public Result<String> addBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
+    public Result<List<Long>> addBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
         Db.saveBatch(bangumiVideoGroups);
-        return Result.success();
+        return Result.success(bangumiVideoGroups.stream().map(com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup::getVideoGroupId).toList());
     }
 
     @RequirePermission(value = "99", exception = BaseException.class)
