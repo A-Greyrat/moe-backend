@@ -70,7 +70,7 @@ public class VideoServiceImpl implements VideoService {
 
     private static final Pattern bvPattern = Pattern.compile("BV[a-zA-Z0-9]+");
 
-    private static final int TRANSFORM_TASK_TTL = 1200;
+    private static final int TRANSFORM_TASK_TTL = 1800;
 
     @Caching(evict = {
             @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
