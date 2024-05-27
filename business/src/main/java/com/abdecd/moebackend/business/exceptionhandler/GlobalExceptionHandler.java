@@ -4,9 +4,11 @@ import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.result.Result;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MultipartException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 
@@ -69,5 +71,29 @@ public class GlobalExceptionHandler {
     public Result<String> nullPointerExceptionHandler(NullPointerException ex) {
         log.error("异常信息：{}", ex.getMessage());
         return Result.error(500, "信息不全");
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(Exception ex) {
+        log.error("异常信息：{}", ex.getMessage());
+        return Result.error(500, MessageConstant.UNKNOWN_ERROR);
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(MultipartException ex) {
+        log.error("异常信息：{}", ex.getMessage());
+        return Result.error(MessageConstant.MULTIPART_EXCEPTION);
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(IllegalArgumentException ex) {
+        log.error("异常信息：{}", ex.getMessage());
+        return Result.error(MessageConstant.ARG_ERROR);
+    }
+
+    @ExceptionHandler
+    public Result<String> exceptionHandler(DataIntegrityViolationException ex) {
+        log.error("异常信息：{}", ex.getMessage());
+        return Result.error(MessageConstant.DB_ERROR);
     }
 }
