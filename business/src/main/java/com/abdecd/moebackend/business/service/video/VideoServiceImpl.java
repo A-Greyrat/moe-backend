@@ -209,7 +209,8 @@ public class VideoServiceImpl implements VideoService {
     })
     @Transactional
     public void videoTransformSave(VideoTransformTask task, Byte videoStatus) {
-        if (videoMapper.selectById(task.getVideoId()) == null) {
+        var videoInDB = videoMapper.selectById(task.getVideoId());
+        if (videoInDB == null) {
             deleteVideo(task.getVideoId());
             return;
         }
@@ -226,7 +227,7 @@ public class VideoServiceImpl implements VideoService {
                 );
             }
         }
-        if (Objects.equals(videoStatus, Video.Status.TRANSFORMING)) videoStatusUpdate(task.getVideoId(), videoStatus);
+        if (Objects.equals(videoInDB.getStatus(), Video.Status.TRANSFORMING)) videoStatusUpdate(task.getVideoId(), videoStatus);
     }
 
     @Caching(evict = {
