@@ -58,7 +58,7 @@ public class RecommendController {
             @RequestParam Long id,
             @RequestParam(defaultValue = "10") @Min(1) @Max(20) int num
     ) {
-        var df = new DeferredResult<Result<List<VideoGroupWithDataVO>>>(400L);
+        var df = new DeferredResult<Result<List<VideoGroupWithDataVO>>>(300L);
         df.onTimeout(() -> {
             var ids = videoGroupMapper.selectList(new LambdaQueryWrapper<VideoGroup>()
                     .select(VideoGroup::getId)

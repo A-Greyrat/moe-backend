@@ -87,8 +87,8 @@ public class PlainUserService {
         );
         if (list.isEmpty()) return;
         for (var videoGroup : list) {
-            stringRedisTemplate.delete(RedisConstant.VIDEO_GROUP_CACHE.substring(0, RedisConstant.VIDEO_GROUP_CACHE.lastIndexOf("#")) + "::" + videoGroup.getId());
-            stringRedisTemplate.delete(RedisConstant.BANGUMI_VIDEO_GROUP_CACHE.substring(0, RedisConstant.BANGUMI_VIDEO_GROUP_CACHE.lastIndexOf("#")) + "::" + videoGroup.getId());
+            stringRedisTemplate.delete(RedisConstant.VIDEO_GROUP_CACHE + "::" + videoGroup.getId());
+            stringRedisTemplate.delete(RedisConstant.BANGUMI_VIDEO_GROUP_CACHE + "::" + videoGroup.getId());
         }
     }
 

@@ -34,9 +34,9 @@ public class RedisConstant {
     public static final String VIDEO_GROUP_WATCH_CNT = "moe:video_group:watch_cnt:";
     public static final String VIDEO_GROUP_LIKE_CNT = "moe:video_group:like_cnt:";
     public static final String VIDEO_GROUP_FAVORITE_CNT = "moe:video_group:favorite_cnt:";
-    public static final String VIDEO_GROUP_CACHE = "moe:video_group_cache#300";// todo 随机过期时间
+    public static final String VIDEO_GROUP_CACHE = "moe:video_group_cache";
     public static final String VIDEO_GROUP_TYPE_CACHE = "moe:video_group_type_cache#300";
-    public static final String BANGUMI_VIDEO_GROUP_CACHE = "moe:bangumi_video_group_cache#300";
+    public static final String BANGUMI_VIDEO_GROUP_CACHE = "moe:bangumi_video_group_cache";
     public static final String BANGUMI_VIDEO_GROUP_CONTENTS_CACHE = "moe:bangumi_video_group_contents_cache#300";
     public static final String VIDEO_GROUP_CONTENTS_CACHE = "moe:video_group_contents_cache#300";
     public static final String RECOMMEND_CAROUSEL = "moe:recommend_carousel";
