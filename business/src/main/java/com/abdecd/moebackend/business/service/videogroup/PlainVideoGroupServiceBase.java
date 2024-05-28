@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -160,6 +161,7 @@ public class PlainVideoGroupServiceBase {
         } else elasticSearchService.deleteSearchEntity(plainVideoGroupUpdateDTO.getId());
     }
 
+    @Async("slowExecutor")
     @Caching(evict = {
             @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CACHE, key = "#videoGroupId"),
             @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#videoGroupId")

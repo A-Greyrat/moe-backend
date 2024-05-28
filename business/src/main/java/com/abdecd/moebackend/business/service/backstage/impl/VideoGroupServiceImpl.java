@@ -32,6 +32,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -292,6 +293,7 @@ public class VideoGroupServiceImpl implements VideoGroupService {
         }
     }
 
+    @Async("slowExecutor")
     @Override
     public void deleteVideoGroup(Long id) {
         videoGroupMapper.deleteById(id);

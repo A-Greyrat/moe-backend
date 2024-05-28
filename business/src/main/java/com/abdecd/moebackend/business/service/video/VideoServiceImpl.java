@@ -3,9 +3,11 @@ package com.abdecd.moebackend.business.service.video;
 import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.common.property.MoeProperties;
 import com.abdecd.moebackend.business.common.util.SpringContextUtil;
+import com.abdecd.moebackend.business.dao.entity.Danmaku;
 import com.abdecd.moebackend.business.dao.entity.Video;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.entity.VideoSrc;
+import com.abdecd.moebackend.business.dao.mapper.DanmakuMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoGroupMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoSrcMapper;
@@ -33,6 +35,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,6 +70,8 @@ public class VideoServiceImpl implements VideoService {
     private MoeProperties moeProperties;
     @Autowired
     private VideoGroupMapper videoGroupMapper;
+    @Autowired
+    private DanmakuMapper danmakuMapper;
 
     private static final Pattern bvPattern = Pattern.compile("BV[a-zA-Z0-9]+");
 
@@ -182,8 +187,8 @@ public class VideoServiceImpl implements VideoService {
 
     @SuppressWarnings("unused")
     @Caching(evict = {
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
-            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId) == null ? -1 : root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
+        @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId) == null ? -1 : root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
             @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId"),
             @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#task.videoId")
     })
@@ -322,9 +327,10 @@ public class VideoServiceImpl implements VideoService {
         videoMapper.updateById(entity);
     }
 
+    @Async("slowExecutor")
     @Caching(evict = {
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#videoId).getVideoGroupId()"),
-            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#videoId).getVideoGroupId()"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#videoId) == null ? -1 :#root.target.getVideoForce(#videoId).getVideoGroupId()"),
+        @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#videoId) == null ? -1 :#root.target.getVideoForce(#videoId).getVideoGroupId()"),
             @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#videoId"),
             @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#videoId")
     })
@@ -339,6 +345,8 @@ public class VideoServiceImpl implements VideoService {
 
         videoMapper.deleteById(videoId); // 视频源有外键，不用手动处理
         fileService.deleteDirInSystem("/video-group/" + obj.getVideoGroupId() + "/" + videoId);
+        // 删除弹幕
+        danmakuMapper.delete(new LambdaQueryWrapper<Danmaku>().eq(Danmaku::getVideoId, videoId));
     }
 
     @Override
