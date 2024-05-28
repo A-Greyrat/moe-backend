@@ -9,4 +9,6 @@ public interface FeedbackService {
     Long addFeedback(AddFeedbackDTO addFeedbackDTO);
     Page<FeedbackVO> getFeedbacks(int page, int pageSize, String email, String content);
     boolean handleFeedback(HandleFeedbackDTO handleFeedbackDTO);
+
+    void deleteFeedback(Long[] ids);
 }

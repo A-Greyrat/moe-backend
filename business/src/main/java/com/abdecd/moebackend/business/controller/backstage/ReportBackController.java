@@ -3,6 +3,7 @@ package com.abdecd.moebackend.business.controller.backstage;
 
 import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.backstage.report.ReportDTO;
+import com.abdecd.moebackend.business.pojo.dto.report.DeleteReportDTO;
 import com.abdecd.moebackend.business.pojo.vo.report.ReportCommentTotalVO;
 import com.abdecd.moebackend.business.pojo.vo.report.ReportVideoTotalVO;
 import com.abdecd.moebackend.business.service.report.ReportService;
@@ -44,5 +45,13 @@ public class ReportBackController {
     public Result<ReportCommentTotalVO> getCommentReport(@Valid @RequestParam("page") @Min(1) Integer page, @Valid @RequestParam("pageSize") @Min(1) @Max(200) Integer pageSize) {
         ReportCommentTotalVO reportCommentTotalVO = reportService.getReportCommentVO(page, pageSize);
         return Result.success(reportCommentTotalVO);
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "删除举报")
+    @PostMapping("/delete")
+    public Result<String> deleteReport(@RequestBody @Valid DeleteReportDTO dto) {
+        reportService.deleteReport(dto.getIds());
+        return Result.success();
     }
 }

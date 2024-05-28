@@ -14,4 +14,6 @@ public interface ReportService {
     ReportVideoTotalVO getReportVideoVO(Integer page, Integer pageSize);
 
     ReportCommentTotalVO getReportCommentVO(Integer page, Integer pageSize);
+
+    void deleteReport(Long[] ids);
 }

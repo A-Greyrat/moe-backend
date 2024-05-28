@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 
 @Service
 public class FeedbackServiceImpl implements FeedbackService {
@@ -44,5 +45,10 @@ public class FeedbackServiceImpl implements FeedbackService {
         }
         feedback.setStatus(Integer.valueOf(StatusConstant.DISABLE));
         return feedbackMapper.updateById(feedback) == 1;
+    }
+
+    @Override
+    public void deleteFeedback(Long[] ids) {
+        feedbackMapper.deleteBatchIds(Arrays.asList(ids));
     }
 }

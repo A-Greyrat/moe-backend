@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 @Service
 public class ReportServiceImpl implements ReportService {
@@ -162,6 +163,11 @@ public class ReportServiceImpl implements ReportService {
         }
 
         return reportCommentTotalVO;
+    }
+
+    @Override
+    public void deleteReport(Long[] ids) {
+        reportMapper.deleteBatchIds(Arrays.asList(ids));
     }
 }
 

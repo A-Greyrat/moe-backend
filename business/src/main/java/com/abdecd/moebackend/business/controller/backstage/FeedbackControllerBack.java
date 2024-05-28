@@ -1,6 +1,7 @@
 package com.abdecd.moebackend.business.controller.backstage;
 
 import com.abdecd.moebackend.business.common.exception.BaseException;
+import com.abdecd.moebackend.business.pojo.dto.feedback.DeleteFeedbackDTO;
 import com.abdecd.moebackend.business.pojo.dto.feedback.HandleFeedbackDTO;
 import com.abdecd.moebackend.business.pojo.vo.feedback.FeedbackVO;
 import com.abdecd.moebackend.business.service.feedback.FeedbackService;
@@ -46,5 +47,13 @@ public class FeedbackControllerBack {
         } else {
             return Result.error("反馈处理失败");
         }
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "删除反馈")
+    @PostMapping("/delete")
+    public Result<String> deleteFeedback(@RequestBody @Valid DeleteFeedbackDTO dto) {
+        feedbackService.deleteFeedback(dto.getIds());
+        return Result.success("ok");
     }
 }
