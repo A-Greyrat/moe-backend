@@ -226,7 +226,7 @@ public class VideoServiceImpl implements VideoService {
                 );
             }
         }
-        videoStatusUpdate(task.getVideoId(), videoStatus);
+        if (Objects.equals(videoStatus, Video.Status.TRANSFORMING)) videoStatusUpdate(task.getVideoId(), videoStatus);
     }
 
     @Caching(evict = {

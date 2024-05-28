@@ -102,7 +102,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public Result<String> nullPointerExceptionHandler(NullPointerException ex) {
         log.error("异常信息：{}", ex.toString());
-        ex.printStackTrace();
         return Result.error(500, "信息不全");
     }
 }
