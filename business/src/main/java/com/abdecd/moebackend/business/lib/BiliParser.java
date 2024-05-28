@@ -43,7 +43,6 @@ public class BiliParser {
             if (resp.code() != 200) throw new IOException();
             if (resp.body() != null) {
                 var json = objectMapper.readTree(resp.body().string());
-                System.out.println(json.toPrettyString());
                 var url = json.get("data")
                         .get("durl")
                         .get(0)
