@@ -95,8 +95,8 @@ public class StatisticService {
         var videoGroupServiceBase = SpringContextUtil.getBean(VideoGroupServiceBase.class);
         List<ContentsItemVO> videoContents = (List<ContentsItemVO>) videoGroupServiceBase.getContents(videoGroupId);
         if (videoContents == null) videoContents = new ArrayList<>();
-        Long commentCnt = videoContents.stream().map(x->commentService.getCommentCount(x.getVideoId())).reduce(0L, Long::sum);
-        Long danmakuCnt = videoContents.stream().map(x->danmakuService.getDanmakuCount(x.getVideoId())).reduce(0L, Long::sum);
+        Long commentCnt = videoContents.stream().parallel().map(x->commentService.getCommentCount(x.getVideoId())).reduce(0L, Long::sum);
+        Long danmakuCnt = videoContents.stream().parallel().map(x->danmakuService.getDanmakuCount(x.getVideoId())).reduce(0L, Long::sum);
         return new StatisticDataVO()
                 .setWatchCnt(watchCnt)
                 .setLikeCnt(likeCnt)
