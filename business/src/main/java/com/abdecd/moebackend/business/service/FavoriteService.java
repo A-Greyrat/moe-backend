@@ -8,6 +8,7 @@ import com.abdecd.moebackend.business.dao.mapper.PlainUserFavoriteMapper;
 import com.abdecd.moebackend.business.dao.mapper.PlainUserLikeMapper;
 import com.abdecd.moebackend.business.pojo.vo.favorite.BangumiVideoGroupFavoriteVO;
 import com.abdecd.moebackend.business.pojo.vo.favorite.FavoriteVO;
+import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupVO;
 import com.abdecd.moebackend.business.service.plainuser.PlainUserHistoryService;
 import com.abdecd.moebackend.business.service.videogroup.BangumiVideoGroupServiceBase;
 import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
@@ -126,6 +127,7 @@ public class FavoriteService {
 
     public FavoriteVO formBangumiFavorite(Long videoGroupId) {
         var info = videoGroupServiceBase.getVideoGroupInfo(videoGroupId);
+        if (info == null) info = new VideoGroupVO();
         var contents = bangumiVideoGroupServiceBase.getContents(videoGroupId);
         var latestVideoTitle = contents.isEmpty() ? null : contents.getFirst().getTitle();
         var lastWatch = plainUserHistoryService.getLatestHistory(videoGroupId);

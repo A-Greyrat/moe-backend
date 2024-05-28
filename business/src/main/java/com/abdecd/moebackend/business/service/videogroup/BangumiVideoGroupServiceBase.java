@@ -127,6 +127,7 @@ public class BangumiVideoGroupServiceBase {
         return new ArrayList<>(objs.stream()
                 .map(obj -> {
                     var videoGroup = videoGroupServiceBase.getVideoGroupWithData(obj.getVideoGroupId());
+                    if (videoGroup == null) return null;
                     var video = videoService.getVideoForce(obj.getVideoId());
                     return new BangumiVideoGroupTimeScheduleVO()
                             .setVideoGroupWithDataVO(videoGroup)
@@ -134,6 +135,7 @@ public class BangumiVideoGroupServiceBase {
                             .setWillUpdateIndex(video.getIndex())
                             .setWillUpdateTitle(video.getTitle());
                 })
+                .filter(Objects::nonNull)
                 .toList()
         );
     }

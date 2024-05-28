@@ -24,6 +24,6 @@ public class SearchVideoGroupEntity {
         suggestion = new ArrayList<>();
         suggestion.add(title);
         if (!uploaderName.equals(MessageConstant.ADMIN)) suggestion.add(uploaderName);
-//        suggestion.addAll(tags); // todo 要不要加
+//        suggestion.addAll(tags);
     }
 }

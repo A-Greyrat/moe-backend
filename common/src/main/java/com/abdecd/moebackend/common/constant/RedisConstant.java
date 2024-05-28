@@ -52,6 +52,7 @@ public class RedisConstant {
     public static final int LIMIT_FEEDBACK_ADD_CNT = 10;
     public static final int LIMIT_FEEDBACK_ADD_RESET_TIME = 3; // seconds
     public static final String BANGUMI_INDEX_HOT = "moe:bangumi_index:hot";
+    public static final long BANGUMI_INDEX_HOT_RESET_TIME = 7; // days
     public static final String BANGUMI_INDEX_FAVORITE_CNT = "moe:bangumi_index:favorite_cnt";
     public static final String BANGUMI_INDEX_FAVORITE_CNT_LOCK = "moe:bangumi_index:favorite_cnt_lock";
     public static final String BANGUMI_INDEX_WATCH_CNT = "moe:bangumi_index:watch_cnt";

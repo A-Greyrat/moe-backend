@@ -23,6 +23,7 @@ import org.springframework.web.context.request.async.DeferredResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Tag(name = "推荐接口")
 @RestController
@@ -71,6 +72,7 @@ public class RecommendController {
             } else {
                 result = new ArrayList<>(ids.stream()
                     .map(idd -> videoGroupServiceBase.getVideoGroupWithData(idd.getId()))
+                    .filter(Objects::nonNull)
                     .toList()
                 );
             }

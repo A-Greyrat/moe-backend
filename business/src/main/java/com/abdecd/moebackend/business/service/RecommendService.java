@@ -18,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-// todo
 @Service
 public class RecommendService {
     @Autowired
@@ -35,6 +34,7 @@ public class RecommendService {
         var ids = self.getCarouselIds();
         return new ArrayList<>(ids.stream()
                 .map(id -> videoGroupServiceBase.getVideoGroupWithData(id))
+                .filter(Objects::nonNull)
                 .toList()
         );
     }
@@ -77,6 +77,7 @@ public class RecommendService {
         if (ids.isEmpty()) return new ArrayList<>();
         return new ArrayList<>(ids.stream()
                 .map(id -> videoGroupServiceBase.getVideoGroupWithData(id.getId()))
+                .filter(Objects::nonNull)
                 .toList()
         );
     }

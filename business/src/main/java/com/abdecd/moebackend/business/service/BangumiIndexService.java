@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class BangumiIndexService {
@@ -86,7 +87,11 @@ public class BangumiIndexService {
         if (videoGroupServiceBase.getVideoGroupType(videoGroupId) == null) return;
         if (!Objects.equals(videoGroupServiceBase.getVideoGroupType(videoGroupId), VideoGroup.Type.ANIME_VIDEO_GROUP)) return;
         stringRedisTemplate.opsForZSet().incrementScore(RedisConstant.BANGUMI_INDEX_HOT, videoGroupId + "", 1);
-        // todo 考虑设置过期时间
+        // 设置过期时间
+        var exp = stringRedisTemplate.getExpire(RedisConstant.BANGUMI_INDEX_HOT);
+        if (exp == null || exp < 0) {
+            stringRedisTemplate.expire(RedisConstant.BANGUMI_INDEX_HOT, RedisConstant.BANGUMI_INDEX_HOT_RESET_TIME, TimeUnit.DAYS);
+        }
     }
 
     public List<Long> listHot(int num) {
@@ -191,6 +196,7 @@ public class BangumiIndexService {
         var self = SpringContextUtil.getBean(getClass());
         return self.listBangumiCache(type)
                 .stream().map(videoGroupId -> videoGroupServiceBase.getVideoGroupWithData(videoGroupId))
+                .filter(Objects::nonNull)
                 .toList();
     }
 

@@ -97,6 +97,7 @@ public class PlainUserHistoryService {
         var video = videoService.getVideoBase(addHistoryDTO.getVideoId());
         if (video == null) return;
         var videoGroup = videoGroupServiceBase.getVideoGroupInfo(video.getVideoGroupId());
+        if (videoGroup == null) return;
         var entity = addHistoryDTO.toEntity(videoGroup.getId());
 
         // add to redis
