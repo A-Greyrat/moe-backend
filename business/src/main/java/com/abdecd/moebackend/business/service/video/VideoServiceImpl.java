@@ -184,7 +184,8 @@ public class VideoServiceImpl implements VideoService {
     @Caching(evict = {
             @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
             @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId")
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId"),
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#task.videoId")
     })
     public void videoTransformFailCb(VideoTransformTask task) {
         videoMapper.deleteById(task.getVideoId());
@@ -204,6 +205,7 @@ public class VideoServiceImpl implements VideoService {
 
     @Caching(evict = {
             @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId"),
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#task.videoId"),
             @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#task.videoId)"),
             @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#task.videoId)")
     })
@@ -261,7 +263,8 @@ public class VideoServiceImpl implements VideoService {
             @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#updateVideoDTO.videoGroupId == null ? -1 : #updateVideoDTO.videoGroupId"),
             @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#updateVideoDTO.id)"),
             @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#updateVideoDTO.id)"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#updateVideoDTO.id")
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#updateVideoDTO.id"),
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#updateVideoDTO.id")
     })
     @Transactional
     @Override
@@ -322,7 +325,8 @@ public class VideoServiceImpl implements VideoService {
     @Caching(evict = {
             @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#videoId).getVideoGroupId()"),
             @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#videoId).getVideoGroupId()"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#videoId")
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#videoId"),
+            @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#videoId")
     })
     @Override
     public void deleteVideo(Long videoId) {
@@ -374,14 +378,20 @@ public class VideoServiceImpl implements VideoService {
         if (Objects.equals(vo.getStatus(), Video.Status.TRANSFORMING)) {
             vo.setSrc(new ArrayList<>(List.of(new VideoSrcVO("1080p", moeProperties.getDefaultVideoPath()))));
         } else {
-            vo.setSrc(new ArrayList<>(
-                    videoSrcMapper.selectList(new LambdaQueryWrapper<VideoSrc>()
-                            .select(VideoSrc::getSrcName, VideoSrc::getSrc)
-                            .eq(VideoSrc::getVideoId, vo.getId())
-                    ).stream().map(videoSrc -> new VideoSrcVO(videoSrc.getSrcName(), videoSrc.getSrc())).toList()
-            ));
+            var self = SpringContextUtil.getBean(getClass());
+            vo.setSrc(self.getVideoSrcFromDB(vo.getId()));
             parseBV(vo);
         }
+    }
+
+    @Cacheable(cacheNames = RedisConstant.VIDEO_SRC, key = "#videoId", unless = "#result.isEmpty()")
+    public ArrayList<VideoSrcVO> getVideoSrcFromDB(Long videoId) {
+        return new ArrayList<>(
+                videoSrcMapper.selectList(new LambdaQueryWrapper<VideoSrc>()
+                        .select(VideoSrc::getSrcName, VideoSrc::getSrc)
+                        .eq(VideoSrc::getVideoId, videoId)
+                ).stream().map(videoSrc -> new VideoSrcVO(videoSrc.getSrcName(), videoSrc.getSrc())).toList()
+        );
     }
 
     /**
