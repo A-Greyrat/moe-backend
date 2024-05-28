@@ -286,6 +286,9 @@ public class VideoServiceImpl implements VideoService {
                 throw new BaseException(MessageConstant.VIDEO_TRANSFORMING);
 
             // 链接处理
+            videoSrcMapper.delete(new LambdaQueryWrapper<VideoSrc>()
+                    .eq(VideoSrc::getVideoId, updateVideoDTO.getId())
+            );
             if (bvPattern.matcher(updateVideoDTO.getLink()).find()) {
                 videoMapper.updateById(entity.setStatus(videoStatusWillBe));
                 videoSrcMapper.insert(new VideoSrc().setVideoId(entity.getId()).setSrcName("720p").setSrc(updateVideoDTO.getLink()));
