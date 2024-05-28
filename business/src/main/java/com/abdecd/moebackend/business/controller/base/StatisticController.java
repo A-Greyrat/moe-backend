@@ -67,6 +67,6 @@ public class StatisticController {
     @Operation(summary = "获取视频观看量等统计数据")
     @GetMapping("video-group-data")
     public Result<StatisticDataVO> getVideoGroupData(@RequestParam Long id) {
-        return Result.success(statisticService.getStatisticData(id));
+        return Result.success(statisticService.getFullStatisticData(id));
     }
 }

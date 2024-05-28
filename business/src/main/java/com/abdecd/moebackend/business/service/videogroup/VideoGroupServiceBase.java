@@ -105,7 +105,7 @@ public class VideoGroupServiceBase {
         var videoGroupInfo = getVideoGroupInfo(videoGroupId);
         if (videoGroupInfo == null) return null;
         var contents = getContents(videoGroupId);
-        var cnts = statisticService.getStatisticData(videoGroupId);
+        var cnts = statisticService.getFullStatisticData(videoGroupId);
         Long videoId = null;
         try {
             videoId = ((List<ContentsItemVO>) contents).getFirst().getVideoId();
