@@ -12,7 +12,7 @@ public interface VideoGroupMapper extends BaseMapper<VideoGroup> {
     @Insert("INSERT INTO video_group (user_id, title, description, cover, create_time, type, weight,tags,status) VALUES(#{userId}, #{title}, #{description}, #{cover}, #{createTime}, #{type}, #{weight},#{tags},#{videoGroupStatus})")
     int insertVideoGroup(VideoGroup videoGroup); // todo bug fix
 
-    void update(VideoGroup videoGroup);
+    void update_(VideoGroup videoGroup);
 
     @Select("SELECT * FROM video_group  LIMIT #{pageSize} OFFSET #{offset}")
     ArrayList<VideoGroup> selectbyPage(Integer offset, Integer pageSize);

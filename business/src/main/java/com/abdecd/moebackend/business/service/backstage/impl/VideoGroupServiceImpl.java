@@ -98,7 +98,7 @@ public class VideoGroupServiceImpl implements VideoGroupService {
         }
         videoGroup.setCover(coverPath);
 
-        videoGroupMapper.update(videoGroup);
+        videoGroupMapper.update_(videoGroup);
 
         var vo = getVOinfo(videoGroup.getId());
         if (vo != null)
@@ -146,7 +146,7 @@ public class VideoGroupServiceImpl implements VideoGroupService {
         if (coverPath != null)
             videoGroup.setCover(coverPath);
 
-        videoGroupMapper.update(videoGroup);
+        videoGroupMapper.update_(videoGroup);
         var newOne = videoGroupServiceBase.getVideoGroupInfo(videoGroup.getId());
 
         if (newOne != null) {
@@ -282,7 +282,7 @@ public class VideoGroupServiceImpl implements VideoGroupService {
                 .setDescription(videoGroup.getDescription())
                 .setWeight(videoGroup.getWeight())
                 .setTags(videoGroup.getTags());
-        videoGroupMapper.update(entity);
+        videoGroupMapper.update_(entity);
 
         var newOne = videoGroupServiceBase.getVideoGroupInfo(entity.getId());
         if (newOne != null) {

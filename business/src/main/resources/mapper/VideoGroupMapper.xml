@@ -3,7 +3,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.abdecd.moebackend.business.dao.mapper.VideoGroupMapper">
 
-    <update id="update" parameterType="com.abdecd.moebackend.business.dao.entity.VideoGroup">
+    <update id="update_" parameterType="com.abdecd.moebackend.business.dao.entity.VideoGroup">
         UPDATE video_group
         <set>
             <if test="title != null">

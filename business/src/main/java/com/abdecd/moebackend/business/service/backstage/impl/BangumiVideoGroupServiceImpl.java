@@ -128,7 +128,7 @@ public class BangumiVideoGroupServiceImpl implements BangumiVideoGroupService {
         }
 
         videoGroup.setCover(coverPath);
-        videoGroupMapper.update(videoGroup);
+        videoGroupMapper.update_(videoGroup);
 
         var vo = getVOinfo(videoGroup.getId());
         if(vo != null)
