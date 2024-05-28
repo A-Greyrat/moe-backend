@@ -106,7 +106,7 @@ public class BangumiVideoGroupController {
         bangumiVideoGroupVO.setUpdateAtAnnouncement(bangumiVideoGroupVO_.getUpdateAtAnnouncement());
         bangumiVideoGroupVO.setStatus(bangumiVideoGroupVO_.getStatus());
 
-        StatisticDataVO statisticDataVO = statisticService.getStatisticData(id);
+        StatisticDataVO statisticDataVO = statisticService.getFullStatisticData(id);
         bangumiVideoGroupVO.setWatchCnt(Math.toIntExact(statisticDataVO.getWatchCnt()));
         bangumiVideoGroupVO.setFavoriteCnt(Math.toIntExact(statisticDataVO.getFavoriteCnt()));
         bangumiVideoGroupVO.setLikeCnt(Math.toIntExact(statisticDataVO.getLikeCnt()));

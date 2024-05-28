@@ -93,7 +93,7 @@ public class PlainVideoGroupController {
     public Result<VideoGroupVO> getVideoGroup(@Valid @RequestParam("id") Long id) {
         VideoGroupVO videoGroupVO = videoGroupService.getById(id);
 
-        StatisticDataVO statisticDataVO = statisticService.getStatisticData(id);
+        StatisticDataVO statisticDataVO = statisticService.getFullStatisticData(id);
         videoGroupVO.setWatchCnt(Math.toIntExact(statisticDataVO.getWatchCnt()));
         videoGroupVO.setFavoriteCnt(Math.toIntExact(statisticDataVO.getFavoriteCnt()));
         videoGroupVO.setLikeCnt(Math.toIntExact(statisticDataVO.getLikeCnt()));
