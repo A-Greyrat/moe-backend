@@ -18,8 +18,8 @@ public class RedisConstant {
     public static final String VIDEO_TRANSFORM_TASK_VIDEO_ID = "moe:video_transform_task_video_id:";
     public static final String VIDEO_TRANSFORM_TASK_CB_LOCK = "moe:video_transform_task_cb_lock:";
 
-    public static final String VIDEO_VO = "moe:video_vo#500";
-    public static final String VIDEO_SRC = "moe:video_vo:src#600";
+    public static final String VIDEO_VO = "moe:video_vo";
+    public static final String VIDEO_SRC = "moe:video_vo:src";
     public static final String VIDEO_COMMENT = "moe:video_comment#300";
     public static final int VIDEO_COMMENT_CACHE_SIZE = 300;
     public static final String TIMESTAMP_VIDEO_COMMENT = "moe:timestamp:video_comment:";
