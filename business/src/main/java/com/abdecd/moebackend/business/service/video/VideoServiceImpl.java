@@ -209,6 +209,10 @@ public class VideoServiceImpl implements VideoService {
     })
     @Transactional
     public void videoTransformSave(VideoTransformTask task, Byte videoStatus) {
+        if (videoMapper.selectById(task.getVideoId()) == null) {
+            deleteVideo(task.getVideoId());
+            return;
+        }
         for (var taskType : task.getTaskTypes()) {
             if (videoSrcMapper.update(new LambdaUpdateWrapper<VideoSrc>()
                     .eq(VideoSrc::getVideoId, task.getVideoId())
@@ -323,7 +327,7 @@ public class VideoServiceImpl implements VideoService {
         // 检查是不是拥有者
         checkUserHaveTheGroup(obj.getVideoGroupId());
         // 检查是否正在转码
-        if (obj.getStatus().equals(Video.Status.TRANSFORMING)) throw new BaseException(MessageConstant.VIDEO_TRANSFORMING);
+//        if (obj.getStatus().equals(Video.Status.TRANSFORMING)) throw new BaseException(MessageConstant.VIDEO_TRANSFORMING);
 
         videoMapper.deleteById(videoId); // 视频源有外键，不用手动处理
         fileService.deleteDirInSystem("/video-group/" + obj.getVideoGroupId() + "/" + videoId);
