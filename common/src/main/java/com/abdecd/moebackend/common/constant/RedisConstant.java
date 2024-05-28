@@ -48,7 +48,7 @@ public class RedisConstant {
     public static final int FAVORITES_SIZE = 5000;
     public static final String IS_USER_LIKE = "moe:plain_user:like:is_user_like#300";
     public static final String VIDEO_COMMENT_CNT = "moe:video_comment_cnt#300";
-    public static final String VIDEO_DANMAKU_CNT = "moe:video_danmaku_cnt#300";
+    public static final String VIDEO_DANMAKU_CNT = "moe:video_danmaku_cnt";
     public static final String LIMIT_FEEDBACK_ADD = "moe:limit_feedback_add:";
     public static final int LIMIT_FEEDBACK_ADD_CNT = 10;
     public static final int LIMIT_FEEDBACK_ADD_RESET_TIME = 3; // seconds

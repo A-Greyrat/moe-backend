@@ -12,6 +12,7 @@ import com.abdecd.tokenlogin.common.context.UserContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class DanmakuServiceImpl implements DanmakuService {
         danmakuCache = cacheByFrequencyFactory.create(RedisConstant.DANMAKU, 200, 15);
     }
 
+    @CacheEvict(value = RedisConstant.VIDEO_DANMAKU_CNT, key = "#addDanmakuDTO.videoId")
     @Override
     public Long addDanmaku(AddDanmakuDTO addDanmakuDTO) {
         var entity = addDanmakuDTO.toEntity(UserContext.getUserId());
@@ -63,6 +65,7 @@ public class DanmakuServiceImpl implements DanmakuService {
         }, null, null);
     }
 
+    @CacheEvict(value = RedisConstant.VIDEO_DANMAKU_CNT, key = "#root.target.getVideoIdFromDanmaku(#id)")
     @Override
     public void deleteDanmaku(Long id) {
         var danmaku = danmakuMapper.selectById(id);
@@ -75,6 +78,13 @@ public class DanmakuServiceImpl implements DanmakuService {
         }
         danmakuCache.deleteMany(danmaku.getVideoId() + ":*");
         updateDanmakuTimestamp(danmaku.getVideoId());
+    }
+
+    @SuppressWarnings("unused")
+    public Long getVideoIdFromDanmaku(long id) {
+        var danmaku = danmakuMapper.selectById(id);
+        if (danmaku == null) return -1L;
+        return danmaku.getVideoId();
     }
 
     @Cacheable(value = RedisConstant.VIDEO_DANMAKU_CNT, key = "#videoId")
