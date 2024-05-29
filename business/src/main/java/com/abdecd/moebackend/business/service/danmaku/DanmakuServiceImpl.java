@@ -65,7 +65,7 @@ public class DanmakuServiceImpl implements DanmakuService {
         }, null, null);
     }
 
-    @CacheEvict(value = RedisConstant.VIDEO_DANMAKU_CNT, key = "#root.target.getVideoIdFromDanmaku(#id)")
+    @CacheEvict(value = RedisConstant.VIDEO_DANMAKU_CNT, beforeInvocation = true, key = "#root.target.getVideoIdFromDanmaku(#id)")
     @Override
     public void deleteDanmaku(Long id) {
         var danmaku = danmakuMapper.selectById(id);
