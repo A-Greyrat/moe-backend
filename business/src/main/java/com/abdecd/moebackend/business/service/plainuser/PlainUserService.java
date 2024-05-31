@@ -57,7 +57,7 @@ public class PlainUserService {
                 var avatarBody = result.join().getBody();
                 if (avatarBody == null) throw new Exception();
                 var avatar = avatarBody.getData();
-                newFileUrl = fileService.changeTmpFileToStatic(avatar, "/user", "avatar-" + UUID.randomUUID() + avatar.substring(avatar.lastIndexOf('.')));
+                newFileUrl = fileService.changeTmpFileToStatic(avatar, "/user/" + UserContext.getUserId(), "avatar-" + UUID.randomUUID() + avatar.substring(avatar.lastIndexOf('.')));
                 oldFileUrl = plainUserDetailMapper.selectById(UserContext.getUserId()).getAvatar();
             } catch (Exception e) {
                 throw new BaseException(MessageConstant.IMG_FILE_UPLOAD_FAIL);
