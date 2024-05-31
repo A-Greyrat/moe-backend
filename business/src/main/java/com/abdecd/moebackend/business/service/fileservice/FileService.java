@@ -105,4 +105,12 @@ public interface FileService {
     default InputStream getFileInSystem(String path) throws IOException {
         throw new RuntimeException("未实现");
     }
+
+    /**
+     * 文件大小获取 以字节为单位
+     * @param path 相对路径，如 /img/xxx
+     */
+    default long getFileSizeInSystem(String path) {
+        throw new RuntimeException("未实现");
+    }
 }

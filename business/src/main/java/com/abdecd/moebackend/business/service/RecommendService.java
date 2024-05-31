@@ -5,6 +5,7 @@ import com.abdecd.moebackend.business.common.util.SpringContextUtil;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.VideoGroupMapper;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupWithDataVO;
+import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;
@@ -27,7 +28,7 @@ public class RecommendService {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
     @Autowired
-    private ElasticSearchService elasticSearchService;
+    private SearchService searchService;
 
     public List<VideoGroupWithDataVO> getCarousel() {
         var self = SpringContextUtil.getBean(getClass());
@@ -85,10 +86,11 @@ public class RecommendService {
     public List<VideoGroupWithDataVO> getRelated(Long videoGroupId, int num) {
         var vg = videoGroupServiceBase.getVideoGroupInfo(videoGroupId);
         if (vg == null) return new ArrayList<>();
-        var result = elasticSearchService.searchRelated(vg.getTags().replaceAll(";"," "), 1, num + 1);
+        var result = searchService.searchRelated(vg.getTags().replaceAll(";", " "), 1, num + 1);
         if (result.getTotal() == 0) return new ArrayList<>();
         return new ArrayList<>(result.getRecords().stream()
                 .filter(r -> !Objects.equals(r.getVideoGroupVO().getId(), videoGroupId))
+            .limit(num)
                 .toList()
         );
     }

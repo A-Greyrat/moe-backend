@@ -5,7 +5,7 @@ import com.abdecd.moebackend.business.dao.entity.BangumiTimeTable;
 import com.abdecd.moebackend.business.dao.entity.Danmaku;
 import com.abdecd.moebackend.business.dao.entity.Video;
 import com.abdecd.moebackend.business.dao.entity.VideoSrc;
-import com.abdecd.moebackend.business.service.ElasticSearchService;
+import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
 import com.abdecd.moebackend.common.result.Result;
 import com.abdecd.tokenlogin.aspect.RequirePermission;
@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/backstage/dangerous")
 public class DangerousController {
     @Autowired
-    private ElasticSearchService elasticSearchService;
+    private SearchService searchService;
     @Autowired
     private VideoGroupServiceBase videoGroupServiceBase;
 
@@ -117,7 +117,7 @@ public class DangerousController {
     public Result<List<Long>> addVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
         Db.saveBatch(videoGroups);
         try {
-            elasticSearchService.initData(videoGroups.stream().map(x->videoGroupServiceBase.getVideoGroupInfo(x.getId())).collect(Collectors.toList()));
+            searchService.initData(videoGroups.stream().map(x -> videoGroupServiceBase.getVideoGroupInfo(x.getId())).collect(Collectors.toList()));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

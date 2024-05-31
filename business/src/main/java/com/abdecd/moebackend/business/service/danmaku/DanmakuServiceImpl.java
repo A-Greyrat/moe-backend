@@ -1,5 +1,6 @@
 package com.abdecd.moebackend.business.service.danmaku;
 
+import com.abdecd.moebackend.business.common.util.SpringContextUtil;
 import com.abdecd.moebackend.business.dao.entity.Danmaku;
 import com.abdecd.moebackend.business.dao.mapper.DanmakuMapper;
 import com.abdecd.moebackend.business.lib.CacheByFrequency;
@@ -12,13 +13,14 @@ import com.abdecd.tokenlogin.common.context.UserContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -29,6 +31,8 @@ public class DanmakuServiceImpl implements DanmakuService {
     @Autowired
     private RedisTemplate<String, LocalDateTime> redisTemplate;
     @Autowired
+    private StringRedisTemplate stringRedisTemplate;
+    @Autowired
     private RedisHelper redisHelper;
     private CacheByFrequency<List<DanmakuVO>> danmakuCache;
     @Autowired
@@ -36,13 +40,18 @@ public class DanmakuServiceImpl implements DanmakuService {
         danmakuCache = cacheByFrequencyFactory.create(RedisConstant.DANMAKU, 200, 15);
     }
 
-    @CacheEvict(value = RedisConstant.VIDEO_DANMAKU_CNT, key = "#addDanmakuDTO.videoId")
     @Override
     public Long addDanmaku(AddDanmakuDTO addDanmakuDTO) {
         var entity = addDanmakuDTO.toEntity(UserContext.getUserId());
         danmakuMapper.insert(entity);
         danmakuCache.deleteMany(entity.getVideoId() + ":*");
         updateDanmakuTimestamp(entity.getVideoId());
+        // 更新弹幕数量
+        if (Boolean.FALSE.equals(stringRedisTemplate.hasKey(RedisConstant.VIDEO_DANMAKU_CNT + "::" + entity.getVideoId()))) {
+            var self = SpringContextUtil.getBean(getClass());
+            self.getDanmakuCount(entity.getVideoId());
+        }
+        stringRedisTemplate.opsForValue().increment(RedisConstant.VIDEO_DANMAKU_CNT + "::" + entity.getVideoId());
         return entity.getId();
     }
 
@@ -65,34 +74,37 @@ public class DanmakuServiceImpl implements DanmakuService {
         }, null, null);
     }
 
-    @CacheEvict(value = RedisConstant.VIDEO_DANMAKU_CNT, beforeInvocation = true, key = "#root.target.getVideoIdFromDanmaku(#id)")
     @Override
     public void deleteDanmaku(Long id) {
         var danmaku = danmakuMapper.selectById(id);
         if (danmaku == null) return;
         if (
                 danmaku.getUserId().equals(UserContext.getUserId())
-                && danmaku.getTimestamp().isAfter(LocalDateTime.now().minusMinutes(2))
+                    && danmaku.getTime() >= (new Date().getTime() - 1000 * 120)
         ) {
             danmakuMapper.deleteById(id);
+            danmakuCache.deleteMany(danmaku.getVideoId() + ":*");
+            updateDanmakuTimestamp(danmaku.getVideoId());
+            // 更新弹幕数量
+            if (Boolean.FALSE.equals(stringRedisTemplate.hasKey(RedisConstant.VIDEO_DANMAKU_CNT + "::" + danmaku.getVideoId()))) {
+                var self = SpringContextUtil.getBean(getClass());
+                self.getDanmakuCount(danmaku.getVideoId());
+            }
+            stringRedisTemplate.opsForValue().decrement(RedisConstant.VIDEO_DANMAKU_CNT + "::" + danmaku.getVideoId());
         }
-        danmakuCache.deleteMany(danmaku.getVideoId() + ":*");
-        updateDanmakuTimestamp(danmaku.getVideoId());
     }
 
-    @SuppressWarnings("unused")
-    public Long getVideoIdFromDanmaku(long id) {
-        var danmaku = danmakuMapper.selectById(id);
-        if (danmaku == null) return -1L;
-        return danmaku.getVideoId();
+    @Override
+    public Long getDanmakuCount(Long videoId) {
+        var self = SpringContextUtil.getBean(getClass());
+        return Long.parseLong(self.getDanmakuCountCache(videoId));
     }
 
     @Cacheable(value = RedisConstant.VIDEO_DANMAKU_CNT, key = "#videoId")
-    @Override
-    public Long getDanmakuCount(Long videoId) {
+    public String getDanmakuCountCache(Long videoId) {
         return danmakuMapper.selectCount(new LambdaQueryWrapper<Danmaku>()
-                .eq(Danmaku::getVideoId, videoId)
-        );
+            .eq(Danmaku::getVideoId, videoId)
+        ) + "";
     }
 
     @Override

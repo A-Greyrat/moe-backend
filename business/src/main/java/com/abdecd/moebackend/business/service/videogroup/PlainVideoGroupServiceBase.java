@@ -11,9 +11,9 @@ import com.abdecd.moebackend.business.pojo.dto.videogroup.PlainVideoGroupUpdateD
 import com.abdecd.moebackend.business.pojo.vo.plainuser.UploaderVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.ContentsItemVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.PlainVideoGroupVO;
-import com.abdecd.moebackend.business.service.ElasticSearchService;
 import com.abdecd.moebackend.business.service.fileservice.FileService;
 import com.abdecd.moebackend.business.service.plainuser.PlainUserService;
+import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.video.VideoService;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;
@@ -45,7 +45,7 @@ public class PlainVideoGroupServiceBase {
     @Autowired
     private FileService fileService;
     @Autowired
-    private ElasticSearchService elasticSearchService;
+    private SearchService searchService;
 
     @Cacheable(cacheNames = RedisConstant.VIDEO_GROUP_CACHE, key = "#videoGroupId", unless = "#result == null")
     public PlainVideoGroupVO getVideoGroupInfo(Long videoGroupId) {
@@ -157,8 +157,8 @@ public class PlainVideoGroupServiceBase {
         var self = SpringContextUtil.getBean(PlainVideoGroupServiceBase.class);
         var vo = self.getVideoGroupInfo(plainVideoGroupUpdateDTO.getId());
         if (vo != null) {
-            elasticSearchService.saveSearchEntity(vo);
-        } else elasticSearchService.deleteSearchEntity(plainVideoGroupUpdateDTO.getId());
+            searchService.saveSearchEntity(vo);
+        } else searchService.deleteSearchEntity(plainVideoGroupUpdateDTO.getId());
     }
 
     @Async("slowExecutor")
@@ -176,7 +176,7 @@ public class PlainVideoGroupServiceBase {
         // 删文件夹
         fileService.deleteDirInSystem("/video-group/" + videoGroupId);
         // 删es
-        elasticSearchService.deleteSearchEntity(videoGroupId);
+        searchService.deleteSearchEntity(videoGroupId);
     }
 
     public boolean checkAddVideoGroupPending(Long id) {

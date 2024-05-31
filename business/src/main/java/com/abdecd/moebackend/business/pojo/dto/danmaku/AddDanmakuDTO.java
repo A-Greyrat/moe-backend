@@ -8,7 +8,6 @@ import lombok.Data;
 import org.springframework.beans.BeanUtils;
 
 import java.nio.charset.StandardCharsets;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.zip.CRC32;
 
@@ -40,10 +39,9 @@ public class AddDanmakuDTO {
         var crc32result = Long.toHexString(crc32.getValue());
 
         danmaku.setUserId(userId)
-                .setTimestamp(LocalDateTime.now())
-                .setAuthor(crc32result)
-                .setTime(new Date().getTime()/1000)
-                .setText(SensitiveUtils.sensitiveFilter(text));
+            .setAuthor(crc32result)
+            .setTime(new Date().getTime())
+            .setText(SensitiveUtils.sensitiveFilter(text));
 
         return danmaku;
     }

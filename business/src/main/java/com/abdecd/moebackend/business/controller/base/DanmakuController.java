@@ -1,10 +1,15 @@
 package com.abdecd.moebackend.business.controller.base;
 
+import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.common.util.HttpCacheUtils;
+import com.abdecd.moebackend.business.lib.RateLimiter;
 import com.abdecd.moebackend.business.pojo.dto.danmaku.AddDanmakuDTO;
 import com.abdecd.moebackend.business.pojo.vo.danmaku.DanmakuVO;
 import com.abdecd.moebackend.business.service.danmaku.DanmakuService;
+import com.abdecd.moebackend.common.constant.MessageConstant;
+import com.abdecd.moebackend.common.constant.RedisConstant;
 import com.abdecd.moebackend.common.result.Result;
+import com.abdecd.tokenlogin.common.context.UserContext;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 @Tag(name = "弹幕接口")
 @RestController
@@ -22,6 +28,8 @@ import java.util.Map;
 public class DanmakuController {
     @Autowired
     private DanmakuService danmakuService;
+    @Autowired
+    private RateLimiter rateLimiter;
 
     @Operation(summary = "获取弹幕")
     @GetMapping("")
@@ -38,12 +46,24 @@ public class DanmakuController {
     @Operation(summary = "添加弹幕")
     @PostMapping("add")
     public Result<Long> addDanmaku(@RequestBody @Valid AddDanmakuDTO addDanmakuDTO) {
+        if (rateLimiter.isRateLimited(
+            RedisConstant.LIMIT_DANMAKU_USER_MODIFY + UserContext.getUserId(),
+            1,
+            RedisConstant.LIMIT_DANMAKU_USER_MODIFY_RESET_TIME,
+            TimeUnit.SECONDS)
+        ) throw new BaseException(MessageConstant.RATE_LIMIT);
         return Result.success(danmakuService.addDanmaku(addDanmakuDTO));
     }
 
     @Operation(summary = "撤回弹幕")
     @PostMapping("delete")
     public Result<String> deleteDanmaku(@RequestBody Map<String, Long> map) {
+        if (rateLimiter.isRateLimited(
+            RedisConstant.LIMIT_DANMAKU_USER_MODIFY + UserContext.getUserId(),
+            1,
+            RedisConstant.LIMIT_DANMAKU_USER_MODIFY_RESET_TIME,
+            TimeUnit.SECONDS)
+        ) throw new BaseException(MessageConstant.RATE_LIMIT);
         danmakuService.deleteDanmaku(map.get("id"));
         return Result.success();
     }

@@ -14,9 +14,9 @@ import com.abdecd.moebackend.business.pojo.vo.backstage.commonVideoGroup.VideoGr
 import com.abdecd.moebackend.business.pojo.vo.backstage.commonVideoGroup.VideoVo;
 import com.abdecd.moebackend.business.pojo.vo.plainuser.UploaderVO;
 import com.abdecd.moebackend.business.pojo.vo.statistic.StatisticDataVO;
-import com.abdecd.moebackend.business.service.ElasticSearchService;
 import com.abdecd.moebackend.business.service.backstage.VideoGroupService;
 import com.abdecd.moebackend.business.service.fileservice.FileService;
+import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.statistic.StatisticService;
 import com.abdecd.moebackend.business.service.video.VideoService;
 import com.abdecd.moebackend.business.service.videogroup.BangumiVideoGroupServiceBase;
@@ -63,7 +63,7 @@ public class VideoGroupServiceImpl implements VideoGroupService {
     private VideoService videoService;
 
     @Resource
-    private ElasticSearchService elasticSearchService;
+    private SearchService searchService;
 
     @Resource
     private VideoGroupServiceBase videoGroupServiceBase;
@@ -103,7 +103,7 @@ public class VideoGroupServiceImpl implements VideoGroupService {
 
         var vo = getVOinfo(videoGroup.getId());
         if (vo != null)
-            elasticSearchService.saveSearchEntity(vo);
+            searchService.saveSearchEntity(vo);
 
         return videoGroup.getId();
     }
@@ -124,7 +124,7 @@ public class VideoGroupServiceImpl implements VideoGroupService {
         videoGroup.setId(id);
         videoGroupMapper.deleteById(videoGroup);
 
-        elasticSearchService.deleteSearchEntity(id);
+        searchService.deleteSearchEntity(id);
     }
 
     @Override
@@ -151,9 +151,9 @@ public class VideoGroupServiceImpl implements VideoGroupService {
         var newOne = videoGroupServiceBase.getVideoGroupInfo(videoGroup.getId());
 
         if (newOne != null) {
-            elasticSearchService.saveSearchEntity(newOne);
+            searchService.saveSearchEntity(newOne);
         } else {
-            elasticSearchService.deleteSearchEntity(videoGroup.getId());
+            searchService.deleteSearchEntity(videoGroup.getId());
         }
     }
 
@@ -287,9 +287,9 @@ public class VideoGroupServiceImpl implements VideoGroupService {
 
         var newOne = videoGroupServiceBase.getVideoGroupInfo(entity.getId());
         if (newOne != null) {
-            elasticSearchService.saveSearchEntity(newOne);
+            searchService.saveSearchEntity(newOne);
         } else {
-            elasticSearchService.deleteSearchEntity(entity.getId());
+            searchService.deleteSearchEntity(entity.getId());
         }
     }
 
@@ -303,7 +303,7 @@ public class VideoGroupServiceImpl implements VideoGroupService {
         // 删文件夹
         fileService.deleteDirInSystem("/video-group/" + id);
         // 删es
-        elasticSearchService.deleteSearchEntity(id);
+        searchService.deleteSearchEntity(id);
     }
 
     @Caching(evict = {
@@ -315,9 +315,9 @@ public class VideoGroupServiceImpl implements VideoGroupService {
         var result = videoGroupMapper.updateStatus(videoGroupId, status);
         var newOne = videoGroupServiceBase.getVideoGroupInfoForce(videoGroupId);
         if (newOne == null || !Objects.equals(newOne.getVideoGroupStatus(), VideoGroup.Status.ENABLE)) {
-            elasticSearchService.deleteSearchEntity(videoGroupId);
+            searchService.deleteSearchEntity(videoGroupId);
         } else {
-            elasticSearchService.saveSearchEntity(newOne);
+            searchService.saveSearchEntity(newOne);
         }
         return result;
     }

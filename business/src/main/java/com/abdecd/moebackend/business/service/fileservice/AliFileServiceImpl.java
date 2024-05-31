@@ -52,7 +52,7 @@ public class AliFileServiceImpl implements FileService {
         return URL_PREFIX + folder + "/" + fileName;
     }
 
-    private String basicUpload(InputStream inputStream, String folder, String fileName) throws IOException {
+    private String basicUpload(InputStream inputStream, String folder, String fileName) {
         // 保存文件
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         ossClient.putObject(bucketName, (folder + "/" + fileName).substring(1), inputStream);
@@ -79,17 +79,17 @@ public class AliFileServiceImpl implements FileService {
     }
 
     @Override
-    public String uploadFile(InputStream inputStream, String fileName) throws IOException {
+    public String uploadFile(InputStream inputStream, String fileName) {
         return basicUpload(inputStream, getFileFolder(), fileName);
     }
 
     @Override
-    public String uploadFile(InputStream inputStream, String folder, String fileName) throws IOException {
+    public String uploadFile(InputStream inputStream, String folder, String fileName) {
         return basicUpload(inputStream, folder, fileName);
     }
 
     @Override
-    public String changeTmpFileToStatic(String fullTmpFilePath, String folder, String fileName) throws IOException {
+    public String changeTmpFileToStatic(String fullTmpFilePath, String folder, String fileName) {
         // getTmpFolder()/xxx  ->  folder/xxx
         if (folder == null || folder.isBlank()) folder = getFileFolder();
         if (!fullTmpFilePath.startsWith(URL_PREFIX)) return "";
@@ -156,7 +156,14 @@ public class AliFileServiceImpl implements FileService {
     }
 
     @Override
-    public InputStream getFileInSystem(String path) throws IOException {
+    public long getFileSizeInSystem(String path) {
+        OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
+        var obj = ossClient.getObject(new GetObjectRequest(bucketName, path.substring(1)));
+        return obj.getObjectMetadata().getContentLength();
+    }
+
+    @Override
+    public InputStream getFileInSystem(String path) {
         OSS ossClient = new OSSClientBuilder().build(endpoint, accessKeyId, accessKeySecret);
         var obj = ossClient.getObject(new GetObjectRequest(bucketName, path.substring(1)));
         return new AliInputStream(obj.getObjectContent(), ossClient);

@@ -78,8 +78,8 @@ public class VideoServiceImpl implements VideoService {
     private static final int TRANSFORM_TASK_TTL = 1800;
 
     @Caching(evict = {
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
-            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
+        @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
     })
     @Transactional
     @Override
@@ -93,9 +93,9 @@ public class VideoServiceImpl implements VideoService {
         var coverUrl = addVideoDTO.getCover();
         try {
             var cover = fileService.changeTmpFileToStatic(
-                    coverUrl,
-                    "/video-group/" + entity.getVideoGroupId() + "/" + entity.getId(),
-                    "cover" + coverUrl.substring(coverUrl.lastIndexOf('.'))
+                coverUrl,
+                "/video-group/" + entity.getVideoGroupId() + "/" + entity.getId(),
+                "cover" + coverUrl.substring(coverUrl.lastIndexOf('.'))
             );
             if (cover.isEmpty()) throw new Exception(); // will be caught
             videoMapper.updateById(entity.setCover(cover));
@@ -126,8 +126,8 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Caching(evict = {
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
-            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
+        @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
     })
     @Transactional
     @Override
@@ -166,19 +166,23 @@ public class VideoServiceImpl implements VideoService {
      * @param originPath 如 tmp/1/video.mp4
      */
     public void createTransformTask(Long videoGroupId, Long videoId, String originPath, String cbStr, String failCbStr) {
+        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(RedisConstant.LIMIT_TRANSFORM_VIDEO)))
+            throw new BaseException(MessageConstant.LIMIT_TRANSFORM_VIDEO);
+        var size = fileService.getFileSizeInSystem(originPath);
+        if (size > 500 * 1024 * 1024) throw new BaseException(MessageConstant.FILE_TOO_LARGE);
         // 视频转码
         var task = new VideoTransformTask()
-                .setId(UUID.randomUUID() + "")
-                .setVideoId(videoId)
-                .setOriginPath(originPath)
-                .setTargetPaths(new String[]{
-                        "video-group/" + videoGroupId + "/" + videoId + "/360p.mp4",
-                        "video-group/" + videoGroupId + "/" + videoId + "/720p.mp4",
-                        "video-group/" + videoGroupId + "/" + videoId + "/1080p.mp4"
-                })
-                .setStatus(new VideoTransformTask.Status[]{VideoTransformTask.Status.WAITING, VideoTransformTask.Status.WAITING, VideoTransformTask.Status.WAITING})
-                .setCbBeanNameAndMethodName(cbStr)
-                .setFailCb(failCbStr);
+            .setId(UUID.randomUUID() + "")
+            .setVideoId(videoId)
+            .setOriginPath(originPath)
+            .setTargetPaths(new String[]{
+                "video-group/" + videoGroupId + "/" + videoId + "/360p.mp4",
+                "video-group/" + videoGroupId + "/" + videoId + "/720p.mp4",
+                "video-group/" + videoGroupId + "/" + videoId + "/1080p.mp4"
+            })
+            .setStatus(new VideoTransformTask.Status[]{VideoTransformTask.Status.WAITING, VideoTransformTask.Status.WAITING, VideoTransformTask.Status.WAITING})
+            .setCbBeanNameAndMethodName(cbStr)
+            .setFailCb(failCbStr);
 
         var plainUser = plainUserService.getPlainUserDetail(UserContext.getUserId());
         var name = plainUser == null ? "" : plainUser.getNickname();
@@ -189,8 +193,8 @@ public class VideoServiceImpl implements VideoService {
     @Caching(evict = {
         @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId) == null ? -1 : root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
         @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#task.videoId) == null ? -1 : root.target.getVideoForce(#task.videoId).getVideoGroupId()"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#task.videoId")
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#task.videoId")
     })
     public void videoTransformFailCb(VideoTransformTask task) {
         videoMapper.deleteById(task.getVideoId());
@@ -209,10 +213,10 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Caching(evict = {
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#task.videoId"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#task.videoId)"),
-            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#task.videoId)")
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#task.videoId"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#task.videoId"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#task.videoId)"),
+        @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#task.videoId)")
     })
     @Transactional
     public void videoTransformSave(VideoTransformTask task, Byte videoStatus) {
@@ -223,34 +227,36 @@ public class VideoServiceImpl implements VideoService {
         }
         for (var taskType : task.getTaskTypes()) {
             if (videoSrcMapper.update(new LambdaUpdateWrapper<VideoSrc>()
-                    .eq(VideoSrc::getVideoId, task.getVideoId())
-                    .eq(VideoSrc::getSrcName, taskType.NAME)
-                    .set(VideoSrc::getSrc, resourceLinkHandler.getVideoLink(task.getTargetPaths()[taskType.NUM]))) == 0
+                .eq(VideoSrc::getVideoId, task.getVideoId())
+                .eq(VideoSrc::getSrcName, taskType.NAME)
+                .set(VideoSrc::getSrc, resourceLinkHandler.getVideoLink(task.getTargetPaths()[taskType.NUM]))) == 0
             ) {
                 videoSrcMapper.insert(new VideoSrc()
-                        .setVideoId(task.getVideoId())
-                        .setSrcName(taskType.NAME)
-                        .setSrc(resourceLinkHandler.getVideoLink(task.getTargetPaths()[taskType.NUM]))
+                    .setVideoId(task.getVideoId())
+                    .setSrcName(taskType.NAME)
+                    .setSrc(resourceLinkHandler.getVideoLink(task.getTargetPaths()[taskType.NUM]))
                 );
             }
         }
-        if (Objects.equals(videoInDB.getStatus(), Video.Status.TRANSFORMING)) videoStatusUpdate(task.getVideoId(), videoStatus);
+        if (Objects.equals(videoInDB.getStatus(), Video.Status.TRANSFORMING))
+            videoStatusUpdate(task.getVideoId(), videoStatus);
     }
 
     @Caching(evict = {
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#videoId"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#videoId)"),
-            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#videoId)")
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#videoId"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#videoId)"),
+        @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#videoId)")
     })
     @Transactional
     public void videoStatusUpdate(Long videoId, Byte videoStatus) {
         videoMapper.updateById(new Video()
-                .setId(videoId)
-                .setStatus(videoStatus)
+            .setId(videoId)
+            .setStatus(videoStatus)
         );
         // 如果视频组显示正在转码(转码没设缓存)，那放出来
         if (Objects.equals(videoStatus, Video.Status.ENABLE)) {
             var videoGroup = videoGroupMapper.selectById(getVideoGroupIdFromVideoId(videoId));
+            if (videoGroup == null) return;
             if (Objects.equals(videoGroup.getVideoGroupStatus(), VideoGroup.Status.TRANSFORMING)) {
                 var videoGroupServiceBase = SpringContextUtil.getBean(VideoGroupServiceBase.class);
                 videoGroupServiceBase.changeStatus(videoGroup.getId(), VideoGroup.Status.ENABLE);
@@ -264,12 +270,12 @@ public class VideoServiceImpl implements VideoService {
     }
 
     @Caching(evict = {
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#updateVideoDTO.videoGroupId == null ? -1 : #updateVideoDTO.videoGroupId"),
-            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#updateVideoDTO.videoGroupId == null ? -1 : #updateVideoDTO.videoGroupId"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#updateVideoDTO.id)"),
-            @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#updateVideoDTO.id)"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#updateVideoDTO.id"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#updateVideoDTO.id")
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#updateVideoDTO.videoGroupId == null ? -1 : #updateVideoDTO.videoGroupId"),
+        @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#updateVideoDTO.videoGroupId == null ? -1 : #updateVideoDTO.videoGroupId"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#updateVideoDTO.id)"),
+        @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#root.target.getVideoGroupIdFromVideoId(#updateVideoDTO.id)"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#updateVideoDTO.id"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#updateVideoDTO.id")
     })
     @Transactional
     @Override
@@ -295,7 +301,7 @@ public class VideoServiceImpl implements VideoService {
 
             // 链接处理
             videoSrcMapper.delete(new LambdaQueryWrapper<VideoSrc>()
-                    .eq(VideoSrc::getVideoId, updateVideoDTO.getId())
+                .eq(VideoSrc::getVideoId, updateVideoDTO.getId())
             );
             if (bvPattern.matcher(updateVideoDTO.getLink()).find()) {
                 videoMapper.updateById(entity.setStatus(videoStatusWillBe));
@@ -313,9 +319,9 @@ public class VideoServiceImpl implements VideoService {
         if (coverUrl != null) {
             try {
                 var cover = fileService.changeTmpFileToStatic(
-                        coverUrl,
-                        "/video-group/" + updateVideoDTO.getVideoGroupId() + "/" + updateVideoDTO.getId(),
-                        "cover" + coverUrl.substring(coverUrl.lastIndexOf('.'))
+                    coverUrl,
+                    "/video-group/" + updateVideoDTO.getVideoGroupId() + "/" + updateVideoDTO.getId(),
+                    "cover" + coverUrl.substring(coverUrl.lastIndexOf('.'))
                 );
                 if (cover.isEmpty()) throw new Exception();
                 entity.setCover(cover);
@@ -331,8 +337,8 @@ public class VideoServiceImpl implements VideoService {
     @Caching(evict = {
         @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#videoId) == null ? -1 :#root.target.getVideoForce(#videoId).getVideoGroupId()"),
         @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, beforeInvocation = true, key = "#root.target.getVideoForce(#videoId) == null ? -1 :#root.target.getVideoForce(#videoId).getVideoGroupId()"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#videoId"),
-            @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#videoId")
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_VO, key = "#videoId"),
+        @CacheEvict(cacheNames = RedisConstant.VIDEO_SRC, key = "#videoId")
     })
     @Override
     public void deleteVideo(Long videoId) {
@@ -395,10 +401,10 @@ public class VideoServiceImpl implements VideoService {
     @Cacheable(cacheNames = RedisConstant.VIDEO_SRC, key = "#videoId", unless = "#result.isEmpty()")
     public ArrayList<VideoSrcVO> getVideoSrcFromDB(Long videoId) {
         return new ArrayList<>(
-                videoSrcMapper.selectList(new LambdaQueryWrapper<VideoSrc>()
-                        .select(VideoSrc::getSrcName, VideoSrc::getSrc)
-                        .eq(VideoSrc::getVideoId, videoId)
-                ).stream().map(videoSrc -> new VideoSrcVO(videoSrc.getSrcName(), videoSrc.getSrc())).toList()
+            videoSrcMapper.selectList(new LambdaQueryWrapper<VideoSrc>()
+                .select(VideoSrc::getSrcName, VideoSrc::getSrc)
+                .eq(VideoSrc::getVideoId, videoId)
+            ).stream().map(videoSrc -> new VideoSrcVO(videoSrc.getSrcName(), videoSrc.getSrc())).toList()
         );
     }
 
@@ -417,11 +423,13 @@ public class VideoServiceImpl implements VideoService {
                     taskList.add(CompletableFuture.supplyAsync(() -> {
                         String url = "";
                         try {
-                            url = biliParser.parseBV(srcObj.getSrc(), srcObj.getSrcName(), vo.getIndex()+"");
-                        } catch (Exception ignored) {}
+                            url = biliParser.parseBV(srcObj.getSrc(), srcObj.getSrcName(), vo.getIndex() + "");
+                        } catch (Exception ignored) {
+                        }
                         try {
                             if (url.isEmpty()) url = biliParser.parseBV(srcObj.getSrc(), srcObj.getSrcName(), "1");
-                        } catch (Exception ignored) {}
+                        } catch (Exception ignored) {
+                        }
                         return url;
                     }, Executors.newVirtualThreadPerTaskExecutor()));
                 }
@@ -449,8 +457,8 @@ public class VideoServiceImpl implements VideoService {
     public void updateManyIndex(List<UpdateManyVideoIndexDTO.UpdateVideoIndexDTO> arr) {
         for (var dto : arr) {
             videoMapper.update(new LambdaUpdateWrapper<Video>()
-                    .eq(Video::getId, dto.getVideoId())
-                    .set(Video::getIndex, dto.getIndex())
+                .eq(Video::getId, dto.getVideoId())
+                .set(Video::getIndex, dto.getIndex())
             );
         }
     }

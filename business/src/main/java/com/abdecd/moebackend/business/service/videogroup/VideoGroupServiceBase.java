@@ -8,7 +8,7 @@ import com.abdecd.moebackend.business.pojo.vo.videogroup.ContentsItemVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupBigVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupWithDataVO;
-import com.abdecd.moebackend.business.service.ElasticSearchService;
+import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.statistic.StatisticService;
 import com.abdecd.moebackend.business.service.video.VideoService;
 import com.abdecd.moebackend.common.constant.MessageConstant;
@@ -39,7 +39,7 @@ public class VideoGroupServiceBase {
     @Autowired
     private VideoService videoService;
     @Autowired
-    private ElasticSearchService elasticSearchService;
+    private SearchService searchService;
 
     @Nullable
     @Cacheable(cacheNames = RedisConstant.VIDEO_GROUP_TYPE_CACHE, key = "#videoGroupId", unless = "#result == null")
@@ -148,8 +148,8 @@ public class VideoGroupServiceBase {
         );
         // 改es
         if (Objects.equals(status, VideoGroup.Status.ENABLE)) {
-            elasticSearchService.saveSearchEntity(getVideoGroupInfo(videoGroupId));
-        } else elasticSearchService.deleteSearchEntity(videoGroupId);
+            searchService.saveSearchEntity(getVideoGroupInfo(videoGroupId));
+        } else searchService.deleteSearchEntity(videoGroupId);
     }
     
     /**

@@ -1,4 +1,4 @@
-package com.abdecd.moebackend.business.service;
+package com.abdecd.moebackend.business.service.search;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.ElasticsearchException;
@@ -14,17 +14,20 @@ import com.abdecd.moebackend.common.constant.ElasticSearchConstant;
 import com.abdecd.moebackend.common.result.PageVO;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+@ConditionalOnProperty(prefix = "spring.data.elasticsearch", name = "url")
 @Service
-public class ElasticSearchService {
+public class ElasticSearchService implements SearchService {
     @Autowired
     private ElasticsearchClient esClient;
 
+    @Override
     public void initData(List<VideoGroupVO> videoGroups) throws IOException {
         List<BulkOperation> operations = new ArrayList<>();
         // 插入视频组
@@ -53,6 +56,7 @@ public class ElasticSearchService {
     }
 
     @SneakyThrows
+    @Override
     public void saveSearchEntity(VideoGroupVO videoGroupVO) {
         esClient.index(u -> u
                 .index(ElasticSearchConstant.INDEX_NAME)
@@ -62,6 +66,7 @@ public class ElasticSearchService {
     }
 
     @SneakyThrows
+    @Override
     public void deleteSearchEntity(Long id) {
         esClient.delete(u -> u
                 .index(ElasticSearchConstant.INDEX_NAME)
@@ -69,6 +74,7 @@ public class ElasticSearchService {
         );
     }
 
+    @Override
     public PageVO<VideoGroupWithDataVO> search(String keyword, Byte type, Integer page, Integer pageSize) {
         var strlen = keyword.replaceAll("\\s", "").length();
         String minimumShouldMatch;
@@ -123,6 +129,7 @@ public class ElasticSearchService {
         }
     }
 
+    @Override
     public PageVO<VideoGroupWithDataVO> searchRelated(String keyword, Integer page, Integer pageSize) {
         try {
             var response = esClient.search(s -> s
@@ -161,6 +168,7 @@ public class ElasticSearchService {
     }
 
     @SneakyThrows
+    @Override
     public List<String> getSearchSuggestions(String keyword, Integer num) {
         var response = esClient.search(s -> s
                 .index(ElasticSearchConstant.INDEX_NAME)

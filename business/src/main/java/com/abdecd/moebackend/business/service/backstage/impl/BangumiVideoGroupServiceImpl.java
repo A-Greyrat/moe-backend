@@ -12,9 +12,9 @@ import com.abdecd.moebackend.business.pojo.dto.backstage.bangumiVideoGroup.Bangu
 import com.abdecd.moebackend.business.pojo.vo.backstage.bangumiVideoGroup.BangumiVideoGroupVO;
 import com.abdecd.moebackend.business.pojo.vo.plainuser.UploaderVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupVO;
-import com.abdecd.moebackend.business.service.ElasticSearchService;
 import com.abdecd.moebackend.business.service.backstage.BangumiVideoGroupService;
 import com.abdecd.moebackend.business.service.fileservice.FileService;
+import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.videogroup.BangumiVideoGroupServiceBase;
 import com.abdecd.moebackend.business.service.videogroup.PlainVideoGroupServiceBase;
 import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
@@ -46,7 +46,7 @@ public class BangumiVideoGroupServiceImpl implements BangumiVideoGroupService {
     private PlainUserDetailMapper plainUserDetailMapper;
 
     @Resource
-    private ElasticSearchService elasticSearchService;
+    private SearchService searchService;
 
     @Resource
     private VideoGroupServiceBase videoGroupServiceBase;
@@ -132,7 +132,7 @@ public class BangumiVideoGroupServiceImpl implements BangumiVideoGroupService {
 
         var vo = getVOinfo(videoGroup.getId());
         if(vo != null)
-            elasticSearchService.saveSearchEntity(vo);
+            searchService.saveSearchEntity(vo);
 
 //        String[] tags = bangumiVideoGroupAddDTO.getTags().split(";");
 //        for (String tagid : tags) {

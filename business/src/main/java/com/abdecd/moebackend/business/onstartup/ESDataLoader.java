@@ -1,7 +1,7 @@
 package com.abdecd.moebackend.business.onstartup;
 
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupVO;
-import com.abdecd.moebackend.business.service.ElasticSearchService;
+import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -16,7 +16,7 @@ import java.util.List;
 @Component
 public class ESDataLoader implements ApplicationRunner {
     @Autowired
-    private ElasticSearchService elasticSearchService;
+    private SearchService searchService;
     @Autowired
     private VideoGroupServiceBase videoGroupServiceBase;
 
@@ -28,6 +28,6 @@ public class ESDataLoader implements ApplicationRunner {
     }
 
     public void loadSearchEntity(List<VideoGroupVO> videoGroupVOs) throws IOException {
-        elasticSearchService.initData(videoGroupVOs);
+        searchService.initData(videoGroupVOs);
     }
 }

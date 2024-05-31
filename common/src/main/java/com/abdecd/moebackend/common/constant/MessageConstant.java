@@ -36,4 +36,6 @@ public class MessageConstant {
     public static final String VIDEO_NOT_EXIST = "视频不存在";
     public static final String MULTIPART_EXCEPTION = "表单异常";
     public static final String DB_ERROR = "数据库操作异常";
+    public static final String FILE_TOO_LARGE = "文件过大";
+    public static final String LIMIT_TRANSFORM_VIDEO = "视频转码服务暂时关闭";
 }
