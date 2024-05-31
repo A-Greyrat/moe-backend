@@ -13,7 +13,6 @@ import com.abdecd.tokenlogin.common.context.UserContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -35,6 +34,7 @@ public class DanmakuServiceImpl implements DanmakuService {
     @Autowired
     private RedisHelper redisHelper;
     private CacheByFrequency<List<DanmakuVO>> danmakuCache;
+
     @Autowired
     public void setDanmakuCache(CacheByFrequencyFactory cacheByFrequencyFactory) {
         danmakuCache = cacheByFrequencyFactory.create(RedisConstant.DANMAKU, 200, 15);
@@ -60,11 +60,11 @@ public class DanmakuServiceImpl implements DanmakuService {
         danmakuCache.recordFrequency(videoId + ":" + segmentIndex);
         return danmakuCache.get(videoId + ":" + segmentIndex, () -> {
             var list = danmakuMapper.selectList(new LambdaQueryWrapper<Danmaku>()
-                    .eq(Danmaku::getVideoId, videoId)
-                    .ge(Danmaku::getBegin, (segmentIndex - 1) * 360)
-                    .lt(Danmaku::getBegin, segmentIndex * 360)
-                    .orderByDesc(Danmaku::getTime)
-                    .last("limit 5000")
+                .eq(Danmaku::getVideoId, videoId)
+                .ge(Danmaku::getBegin, (segmentIndex - 1) * 360)
+                .lt(Danmaku::getBegin, segmentIndex * 360)
+                .orderByDesc(Danmaku::getTime)
+                .last("limit 5000")
             );
             return new ArrayList<>(list.stream().map(x -> {
                 var danmakuVO = new DanmakuVO();
@@ -79,8 +79,8 @@ public class DanmakuServiceImpl implements DanmakuService {
         var danmaku = danmakuMapper.selectById(id);
         if (danmaku == null) return;
         if (
-                danmaku.getUserId().equals(UserContext.getUserId())
-                    && danmaku.getTime() >= (new Date().getTime() - 1000 * 120)
+            danmaku.getUserId().equals(UserContext.getUserId())
+                && danmaku.getTime() >= (new Date().getTime() - 1000 * 120)
         ) {
             danmakuMapper.deleteById(id);
             danmakuCache.deleteMany(danmaku.getVideoId() + ":*");
@@ -100,11 +100,15 @@ public class DanmakuServiceImpl implements DanmakuService {
         return Long.parseLong(self.getDanmakuCountCache(videoId));
     }
 
-    @Cacheable(value = RedisConstant.VIDEO_DANMAKU_CNT, key = "#videoId")
+    //    @Cacheable(value = RedisConstant.VIDEO_DANMAKU_CNT, key = "#videoId")
     public String getDanmakuCountCache(Long videoId) {
-        return danmakuMapper.selectCount(new LambdaQueryWrapper<Danmaku>()
-            .eq(Danmaku::getVideoId, videoId)
-        ) + "";
+        if (Boolean.FALSE.equals(stringRedisTemplate.hasKey(RedisConstant.VIDEO_DANMAKU_CNT + "::" + videoId))) {
+            var value = danmakuMapper.selectCount(new LambdaQueryWrapper<Danmaku>()
+                .eq(Danmaku::getVideoId, videoId)
+            ) + "";
+            stringRedisTemplate.opsForValue().set(RedisConstant.VIDEO_DANMAKU_CNT + "::" + videoId, value);
+        }
+        return stringRedisTemplate.opsForValue().get(RedisConstant.VIDEO_DANMAKU_CNT + "::" + videoId);
     }
 
     @Override
