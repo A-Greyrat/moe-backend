@@ -7,4 +7,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 public interface PlainUserManageService {
     Page<AllVO> listUsers(Long id, String name, Integer status, int page, int pageSize);
     boolean banUser(BanUserDTO banUserDTO);
+
+    void updatePermission(Long id, String permissions);
 }

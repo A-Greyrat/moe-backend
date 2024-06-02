@@ -2,6 +2,7 @@ package com.abdecd.moebackend.business.controller.backstage;
 
 import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.plainuser.BanUserDTO;
+import com.abdecd.moebackend.business.pojo.dto.plainuser.UpdateUserPermissionDTO;
 import com.abdecd.moebackend.business.pojo.vo.plainuser.AllVO;
 import com.abdecd.moebackend.business.service.PlainUserManage.PlainUserManageService;
 import com.abdecd.moebackend.common.result.Result;
@@ -52,5 +53,14 @@ public class PlainUserManageController {
         } else {
             return Result.error("用户处理失败");
         }
+    }
+
+    @RequirePermission(value = "99", exception = BaseException.class)
+    @Operation(summary = "修改用户权限")
+    @PostMapping("/update-permission")
+    public Result<String> updatePermission(@RequestBody @Valid UpdateUserPermissionDTO dto) {
+        if (Objects.equals(dto.getId(), UserContext.getUserId())) throw new BaseException("不需要对自己操作");
+        userService.updatePermission(dto.getId(), dto.getPermission());
+        return Result.success();
     }
 }

@@ -1,5 +1,6 @@
 package com.abdecd.moebackend.business.service.PlainUserManage;
 
+import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.dao.entity.UserManage;
 import com.abdecd.moebackend.business.dao.mapper.PlainUserManageMapper;
 import com.abdecd.moebackend.business.pojo.dto.plainuser.BanUserDTO;
@@ -35,5 +36,14 @@ public class PlainUserManageServierImpl implements PlainUserManageService {
         }
         user.setStatus(banUserDTO.getStatus());
         return userMapper.updateById(user) == 1;
+    }
+
+    @Override
+    public void updatePermission(Long id, String permission) {
+        var user = userMapper.selectById(id);
+        if (user == null) throw new BaseException("用户不存在");
+        user.setPermission(permission);
+        userMapper.updateById(user);
+        userBaseService.forceLogout(user.getId());
     }
 }
