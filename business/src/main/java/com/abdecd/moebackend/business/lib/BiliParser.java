@@ -31,23 +31,27 @@ public class BiliParser {
     public String parseBV(String bvid, String quality, String p) throws IOException {
         log.info("parseBV: bvid={}, quality={}, p={}", bvid, quality, p);
         try (var resp = okHttpClient.newCall(new Request.Builder()
-                .url(HttpUrl.get(moeProperties.getBvUrl()).newBuilder()
-                        .addQueryParameter("bvid", bvid)
-                        .addQueryParameter("SESSDATA", moeProperties.getBiliSession())
-                        .addQueryParameter("qn", bvQualityMap.get(quality))
-                        .addQueryParameter("p", p)
-                        .build()
-                )
+            .url(HttpUrl.get(moeProperties.getBvUrl()).newBuilder()
+                .addQueryParameter("bvid", bvid)
+                .addQueryParameter("SESSDATA", moeProperties.getBiliSession())
+                .addQueryParameter("qn", bvQualityMap.get(quality))
+                .addQueryParameter("p", p)
                 .build()
+            )
+            .build()
         ).execute()) {
             if (resp.code() != 200) throw new IOException();
             if (resp.body() != null) {
                 var json = objectMapper.readTree(resp.body().string());
                 var url = json.get("data")
-                        .get("durl")
-                        .get(0)
-                        .get("url");
-                return moeProperties.getProxyPrefix() + URLUtil.encodeAll(url.textValue());
+                    .get("durl")
+                    .get(0)
+                    .get("url");
+                if (moeProperties.getBvProxyPrefix() != null) {
+                    return moeProperties.getBvProxyPrefix() + url.textValue().substring(url.textValue().indexOf("/upgcxcode"));
+                } else {
+                    return moeProperties.getProxyPrefix() + URLUtil.encodeAll(url.textValue());
+                }
             }
         }
         return null;

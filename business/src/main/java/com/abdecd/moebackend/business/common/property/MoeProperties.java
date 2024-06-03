@@ -14,4 +14,5 @@ public class MoeProperties {
     private String biliSession;
     private String bvUrl;
     private String proxyPrefix;
+    private String bvProxyPrefix;
 }
