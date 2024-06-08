@@ -37,5 +37,6 @@ public class RedisDataLoader implements ApplicationRunner {
         for (var v : list2) {
             danmakuService.getDanmakuCount(v.getId());
         }
+        System.gc();
     }
 }

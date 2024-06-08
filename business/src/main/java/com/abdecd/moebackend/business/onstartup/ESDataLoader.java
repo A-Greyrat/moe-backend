@@ -25,6 +25,7 @@ public class ESDataLoader implements ApplicationRunner {
         var videoGroupVOs = videoGroupServiceBase.listAllAvailableVideoGroupId()
                 .stream().map(id -> videoGroupServiceBase.getVideoGroupInfo(id)).toList();
         loadSearchEntity(videoGroupVOs);
+        System.gc();
     }
 
     public void loadSearchEntity(List<VideoGroupVO> videoGroupVOs) throws IOException {
