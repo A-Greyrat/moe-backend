@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@ConditionalOnMissingBean(ElasticSearchService.class)
+@ConditionalOnMissingBean(ElasticsearchService.class)
 @Service
 public class MysqlSearchService implements SearchService {
     @Autowired

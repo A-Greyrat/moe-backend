@@ -23,7 +23,7 @@ import java.util.List;
 
 @ConditionalOnProperty(prefix = "spring.data.elasticsearch", name = "url")
 @Service
-public class ElasticSearchService implements SearchService {
+public class ElasticsearchService implements SearchService {
     @Autowired
     private ElasticsearchClient esClient;
 

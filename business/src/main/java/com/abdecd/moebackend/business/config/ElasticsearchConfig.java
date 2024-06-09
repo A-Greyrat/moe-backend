@@ -11,8 +11,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class ElasticSearchConfig {
-    @Value("${spring.data.elasticsearch.url}")
+public class ElasticsearchConfig {
+    @Value("${spring.data.elasticsearch.url:http://localhost:9200}")
     private String serverUrl;
 
     @Bean
