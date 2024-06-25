@@ -57,7 +57,7 @@ moe:
   bili-session: xx
   bv-url: https://xx/bv
   bv-proxy-prefix: https://bi.xx
-  proxy-prefix: https://xx/proxy?pReferer=https://xx.com&pUrl=
+  proxy-prefix: https://xx/proxy?xx=
 # 限制视频转码 redis key    moe:limit:transform_video 有值就行
 
 ali:
