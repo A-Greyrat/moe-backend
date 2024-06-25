@@ -152,6 +152,8 @@ public class CommonController {
     @Operation(summary = "获取 ali 直传所需信息")
     @GetMapping("get-ali-upload-sts")
     public CompletableFuture<Result<AliStsVO>> getAliUploadSts(@RequestParam @Pattern(regexp = "^[^\"]+$") String hash) {
+        if (Boolean.TRUE.equals(redisTemplate.hasKey(RedisConstant.LIMIT_TRANSFORM_VIDEO)))
+            throw new BaseException(MessageConstant.LIMIT_TRANSFORM_VIDEO);
         if (!StringUtils.hasText(hash)) throw new BaseException(MessageConstant.ARG_ERROR);
         // 限流
         if (!UserContext.getPermission().contains("99")) {
