@@ -28,16 +28,24 @@ jobs:
     - name: Build with Maven
       run: mvn clean package -Pprod -DskipTests=true
 
+    - name: Make Docker Image
+      run: |
+        docker build -t moe-backend:latest ./business
+        docker save moe-backend:latest > moe-backend.tar
+
     - name: Copy to Server and Run
       run: |
-        cd business/target
-        ssh ${{ secrets.USER_NAME }}@${{ secrets.SERVER_IP }} 'mkdir -p ~/moe-backend'
-        scp moe-backend-main.jar ${{ secrets.USER_NAME }}@${{ secrets.SERVER_IP }}:~/moe-backend
-        scp ../Dockerfile ${{ secrets.USER_NAME }}@${{ secrets.SERVER_IP }}:~/moe-backend
+        scp moe-backend.tar ${{ secrets.USER_NAME }}@${{ secrets.SERVER_IP }}:~/moe-backend
         ssh ${{ secrets.USER_NAME }}@${{ secrets.SERVER_IP }} '
           cd ~/moe-backend
-          /snap/bin/docker stop moe-backend | true
-          /snap/bin/docker rm moe-backend | true
-          /snap/bin/docker build -t moe-backend:latest .
-          /snap/bin/docker run --name moe-backend -p 8080:8080 --restart unless-stopped -v /home/${{ secrets.USER_NAME }}/moe-backend:/moe-backend -d moe-backend:latest
+          docker rm -f moe-backend | true
+          docker image rm -f moe-backend | true
+          docker load < moe-backend.tar
+          docker run \
+            --name moe-backend \
+            -p 8080:8080 \
+            --restart unless-stopped \
+            -v /home/${{ secrets.USER_NAME }}/moe-backend/config:/config \
+            -v /home/${{ secrets.USER_NAME }}/moe-backend/log:/log \
+            -d moe-backend
         '

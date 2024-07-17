@@ -1,0 +1,81 @@
+spring:
+  datasource:
+    url: ENC(uRJUq1S2e5mMpk8bAN95NVUcXaq1qX62cTNG2Z/rm4w6es/nBp42CpEtIBFAhKjgn7ciiYWuctKOB7GHl32JqdhVpbT8xr+1fClTbRmgaIk=)
+    username: ENC(mvNyhbQL1FjbIWbksPEllQ==)
+    password: ENC(gtJxhHlAdW3eHZqe0EDckw==)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ENC(wL032hYLgdl3JDFgzqrv2HQORtSEoShz)
+      port: ENC(DC3t9qMYmeG8pKiKcpNaBA==)
+      database: ENC(fnXxdWrFrYxVxYqe32JPhA==)
+  #    elasticsearch:
+  #      url: ENC(Kx8r7jS9wbpn3wcNuHXujFLiwMKHngxlmrCJXQ+0Z/g=)
+  cache:
+    type: redis
+  mail:
+    host: ENC(BXJ/3z25jjlAWtKzUVUGZ7Z9g5D5Htqv)
+    port: ENC(j2y+nKb4Q5QxItmgUPeS+g==)
+    protocol: smtps
+    default-encoding: UTF-8
+    username: ENC(x+FaKyFtCGt7k3PuR0i0i9Lq1UqlihDd)
+    password: ENC(ugnqUExRKf0Iwfdd2YtAZKYTV+tbc3duPxltRtKyZk4=)
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+token-login:
+  encrypt-str-aes-key: ENC(LYp5jN4519SP0GpXhTwRtCiO2pjnBDRSSKFdyYUOVzY=)
+  jwt-hash-key: ENC(D8BSdc5MMoiyXifO1fF7hJPHS0TElEAXjkkMQp9f0es=)
+  test: true
+
+moe:
+  local-file-service:
+    file-base-path: ENC(ZEPPBMCGObS2E5djMyyBsGuCFxHTVlifF75TI79gdTc0lD+oQwtY/BdpbJ1tiLmKeU66Dser/HQ=)
+    url-prefix: ENC(l6KCmbNbHiPFCj92Ff9k8Sc6ZoxjNrTx)
+  video-base-path: ENC(Ay9kBI3MwKAgNwfpJZ4gu5CwceCKXyKD8CZpBcFfub13LmhTelf68w==)
+  default-video-path: ENC(xRJ3oBEOpxi4GX4+m/VRvWD88SQuCRIPBy/jnH2+GjrByBiqjODGJMdzXMtfpC4+d7g+CfSyflE=)
+  bili-session: ENC(Nux6fhOtdZ4olzbBPisVsiOmDEGHtSUnI+DyEJs29WkHMwvwOrYmtKcSjyeGFw1ip2B0NTUOnmWYKZ/rW1L1IRaO3ziJXbGwV5n4wyihz85+bqe0U44t95UnDWdLUrnQkNXaPFfhp6UQOmmqamCveNJdRToaISpG+LiHhtTCuoOxawea5fN6jSSVKJwM08t+8dWNF+X3jeRA32nYlzpEx6hr5PuX/TwWzPTZFWq7fXFQjRFg3GBVZxFSa1EPevII5oFqaXZlowwHTqNq0+2aiiuoCQ13l7YUoKizBJya5ECOSVsA3aV0fg==)
+  bv-url: ENC(GHGokD4sNOuPXaZV6qtdPa2V/sqZ5rSLBJQxjWITaW8=)
+  bv-proxy-prefix: ENC(Z/N/unxmOKaO23kRWn0z17KqudIISpZ8NQG7eRGGgPc=)
+  proxy-prefix: ENC(ooWd3oYWSGnDs3LC1l8SWePRSUV27jEiFG2/03ElPDfbPjzXsADRGCskPw/x6KuA8qgNrPZpBREJBRnCTqDVCazmXm4ykRY4tfXVaIwPpwM=)
+# 限制视频转码 redis key    moe:limit:transform_video 有值就行
+
+ali:
+  oss:
+    enable: true
+    access-key-id: ENC(khAAASgNP/5qYCORyby7ilstQZHuYrqmOoyvRtu9qcMl07smjh5Rhg==)
+    access-key-secret: ENC(zThW5Efh2UXdRzlpzh6MyuBLRDWJw2VEa2VQn/AP02GoNfeu8G4Unw==)
+    bucket-name: ENC(5WWmsH5RYgZd6iheEAx4gg==)
+    endpoint: ENC(FmaMSh5vqTE39Z8CbRTWm4DguXQen5EwFOURIeyoXwVT5aaAPfGYFw==)
+    url-prefix: ENC(tQFRVakKNbkgMF5IoBEUuj1adK1igIUXy/p2Nw9oZUbY+lJmPyui5A==)
+    sts-region-id: ENC(0DfXo8Cs05yCZ6Rb4rIvwXCgeRWGUqWf)
+    sts-endpoint: ENC(oBigG7aV0DGLYtFeBGlGmRdhJZBvpo5S+XG9iRqn6Myea+WjYjwZeA==)
+    sts-role-arn: ENC(SyJHVqRsIyXy+jeIIMJVb2wxkN3/WbDi/sh8E2uLmUDl6x2NzkkfwlvBz2fhFGZ6xsvT7HBCTKw=)
+    sts-duration-seconds: 900
+    sts-max-size: 2_147_483_648 # 2GB
+    watermark: ENC(C7uAkLABc+eo2Atu9K6ErU8KotbLGf5ZKDa08hDGYyA=)
+
+# mybatis-plus配置控制台打印完整带参数SQL语句
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    tags-sorter: alpha
+    operations-sorter: alpha
+  api-docs:
+    path: /v3/api-docs
+  group-configs:
+    - group: 'base'
+      paths-to-match: '/**'
+      packages-to-scan: com.abdecd.moebackend.business.controller.base
+    - group: 'backstage'
+      paths-to-match: '/**'
+      packages-to-scan: com.abdecd.moebackend.business.controller.backstage

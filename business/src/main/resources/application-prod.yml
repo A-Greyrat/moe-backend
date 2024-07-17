@@ -1,0 +1,63 @@
+spring:
+  datasource:
+    url: ENC(r1m8oz8iNdlCWf33w0/Qkunz3sHhCjH/HxQj8vnXmzZL/fgDm9OU3Azh6Cihekk2WT/A4d/Vpe6lgFqxGGh3XnCbZjtuMO4K/u3la4KmJds=)
+    username: ENC(Ru+KGnuaXuT/ntaMHT07HQ==)
+    password: ENC(vkh3j2DP1ktSYplLYp5How==)
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  data:
+    redis:
+      host: ENC(9asPJfRcyJH7JW8OjLjM1G8YBbyuu/Yz)
+      port: ENC(piXPG2KAVGGlUOm0JFLpQg==)
+      database: ENC(v+BmJn6xVMv6hBVTFvuI2g==)
+      password: ENC(WffpHoZ9O1zB5cC+sxN7Bg==)
+    elasticsearch:
+      url: ENC(lsigF9hIrgA1iYwch1s8vlcgMkYcyDObZ2JHN0nw1yX7P3pRF5sR/Q==)
+  cache:
+    type: redis
+  mail:
+    host: ENC(hD1Ik9cai/SLQR629pN1y1VpWgJVWnSO)
+    port: ENC(7Af0FzK3ZIkuYoCdeB+dDg==)
+    protocol: smtps
+    default-encoding: UTF-8
+    username: ENC(1sCYDn+GEI6x2HEmswmPBIwrEGfHqHEM)
+    password: ENC(CByiy0zVYP2nJCSGgpojqO+Jm75vka15ywysa52+/PA=)
+    test-connection: true
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+logging:
+  file:
+    name: /log/spring.log
+  level:
+    root: info
+
+token-login:
+  encrypt-str-aes-key: ENC(6uMGkAIYVocx/NCTAlKJ25TsxGdXugmbg9MWgPqBvQg=)
+
+moe:
+  video-base-path: ENC(tGyV+wYsVc1B7e8Iy4OqcBe9E+Wqm+6zwD1L0PXuQWlLKWyImhoOxQ==)
+  default-video-path: ENC(f9g8e2M5m07Nw/bcVO5YuBkaBt3haw81OVsdTjnLWlCDfH9XyYV6csGHzacgj7JXnUI5hkeJy0g=)
+  bili-session: ENC(JvJpbzOd6/YEtkT2+N8wRCMYmmcJtZMK7/A7IbXw78LTlP6usoSSvukRLt+2AZBlZ1PJi+ZWq6uZssSPMvO15c4w0RnDVBb0+CvTm9aLxxfJxlsGMJZQQavojrDAw26xYRTerbNLsjSo8zt4e0YzuertXqWqvqibu20YlXAv+GJM0oUajvF+/ohMr2SnwW4Wj8KOLCMRWo5BO2PqaiqAD0tm5R2HOx6Im4vvSvh2sSmF9hqNPjp2w6jD+f2l9ihR1KRp/AC7qm4dRY7egzpgExaVZ5p519T0kAHHvsobCq4uCShLjtjshw==)
+  bv-url: ENC(0A4wnk4U47J7OxvEis2aHAExwVqL9o+sUo2hXGS++1I=)
+  bv-proxy-prefix: ENC(uA7WgaavYuH8ZJ6Xpnte0OZfBW/ugU/lyffKnRomeFU=)
+  proxy-prefix: ENC(COw0VZC1FQj6/TWL1L4tWe3mYb8C2Xgn3/Guu7ilbkm06C7d2SZVby0vep9Mu2U20ZzJFndV2HaAfJ1zuS9HjmeEClIZbAJQMKY/Bt0CJrA=)
+# 限制视频转码 redis key    moe:limit:transform_video 有值就行
+
+ali:
+  oss:
+    enable: true
+    access-key-id: ENC(TeVuFeoZ6/NONWYqHL7FxApDXOCMrXfrcZMdYvn9ZqmJQbVgJydz7Q==)
+    access-key-secret: ENC(SI09SkXFPF+ghXbAisDTaT1Bu2q52ZsGFPpYpolzvYJoXw5fExTqWg==)
+    bucket-name: ENC(FIF+MTobSJR/v7IAs5REPA==)
+    endpoint: ENC(iEM38GHtp2ERJ6QLmBcPZnhJQxDUb7mkJyzPMzWlhuZipVLaNIFqnA==)
+    url-prefix: ENC(qysjO2pnSVhCz+4lUBzvFIuuumX5E4j85cYBU1AmDz0ce05JopS0Sw==)
+    sts-region-id: ENC(81Ny6T/87QxtBXy21A4GX364rq/erPFD)
+    sts-endpoint: ENC(GYLwXqtRywtby1sFhAvVO50csMVPFhmilG1cAI83NFcBUh7aUPqxtA==)
+    sts-role-arn: ENC(v81cyxtmXfnVN8fNVT9TQtFjaNEdEDzUJnBh/XuLm/uh8MEpAR61bbqZuj89LMlPCjZaHfe2oDs=)
+    sts-duration-seconds: 900
+    sts-max-size: 2_147_483_648 # 2GB
+    watermark: ENC(o1zbigCJrJvNHLRpR6Gd9ZeCHpfL8rX/m18Cdv9dFqY=)
