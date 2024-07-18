@@ -39,7 +39,7 @@ jobs:
         ssh ${{ secrets.USER_NAME }}@${{ secrets.SERVER_IP }} '
           cd ~/moe-backend
           docker rm -f moe-backend | true
-          docker image rm -f moe-backend | true
+          docker image rm -f moe-backend:latest | true
           docker load < moe-backend.tar
           docker run \
             --name moe-backend \
