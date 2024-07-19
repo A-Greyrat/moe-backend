@@ -55,7 +55,11 @@ public class CacheByFrequency<T> {
         return keys;
     }
 
-    public void recordFrequency(String key) {
+    /**
+     * 记录访问次数 调用后对应次数+1
+     * @param frequencyKey 访问对应的key 同一个key访问次数累加
+     */
+    public void recordFrequency(String frequencyKey) {
         var scriptText = """
                 -- 定义变量
                 local rootKey = ARGV[1]
@@ -77,21 +81,30 @@ public class CacheByFrequency<T> {
                 end;
                 """;
         var script = new DefaultRedisScript<>(scriptText, Long.class);
-        stringRedisTemplate.execute(script, Collections.emptyList(), rootKey, key, ttlSeconds + "");
+        stringRedisTemplate.execute(script, Collections.emptyList(), rootKey, frequencyKey, ttlSeconds + "");
     }
+
+    /**
+     * 获取内容
+     * @param key 键值一一对应
+     * @param failCb 未命中缓存回调
+     * @param keyToFrequencyKeyFunc 将key转换为frequencyKey 用于判断是否应缓存
+     * @param keyTtlSeconds 键值对应的缓存时间
+     * @return 值
+     */
     @Nullable public T get(
             String key,
             @Nonnull Supplier<T> failCb,
-            @Nullable Function<String, String> valueKeyToZSetKeyFunc,
+            @Nullable Function<String, String> keyToFrequencyKeyFunc,
             @Nullable Integer keyTtlSeconds
     ) {
-        if (valueKeyToZSetKeyFunc == null) valueKeyToZSetKeyFunc = k -> k;
+        if (keyToFrequencyKeyFunc == null) keyToFrequencyKeyFunc = k -> k;
         if (Boolean.TRUE.equals(redisTemplate.hasKey(rootKey + ":value:" + key))) {
             return redisTemplate.opsForValue().get(rootKey + ":value:" + key);
         } else {
             // 判断是否可缓
             var set = stringRedisTemplate.opsForZSet().reverseRange(rootKey + ":zSet", 0, maxCount);
-            if (set == null || !set.contains(valueKeyToZSetKeyFunc.apply(key))) {
+            if (set == null || !set.contains(keyToFrequencyKeyFunc.apply(key))) {
                 return failCb.get();
             } else {
                 // 去数据库拿数据并缓存
@@ -107,7 +120,7 @@ public class CacheByFrequency<T> {
                             Objects.requireNonNullElseGet(keyTtlSeconds, () -> ttlSeconds * 2),
                             TimeUnit.SECONDS
                     );
-                    clearUnusedOne(valueKeyToZSetKeyFunc);
+                    clearUnusedOne(keyToFrequencyKeyFunc);
                 } finally {
                     lock.unlock();
                 }
@@ -139,10 +152,10 @@ public class CacheByFrequency<T> {
 
     /**
      * 清理缓存 随机清掉一个
-     * @param valueKeyToZSetKeyFunc key的判断函数，用于判断是否可缓
+     * @param keyToFrequencyKeyFunc key的判断函数，用于判断是否可缓
      */
-    private void clearUnusedOne(@Nullable Function<String, String> valueKeyToZSetKeyFunc) {
-        if (valueKeyToZSetKeyFunc == null) valueKeyToZSetKeyFunc = k -> k;
+    private void clearUnusedOne(@Nullable Function<String, String> keyToFrequencyKeyFunc) {
+        if (keyToFrequencyKeyFunc == null) keyToFrequencyKeyFunc = k -> k;
         var set = stringRedisTemplate.opsForZSet().reverseRange(rootKey + ":zSet", 0, maxCount);
         if (set == null) return;
 
@@ -150,7 +163,7 @@ public class CacheByFrequency<T> {
         if (fullKeys.isEmpty()) return;
 
         var needDeleted = new ArrayList<String>();
-        Function<String, String> finalValueKeyToZSetKeyFunc = valueKeyToZSetKeyFunc;
+        Function<String, String> finalValueKeyToZSetKeyFunc = keyToFrequencyKeyFunc;
         fullKeys.forEach(fullKey -> {
             if (!set.contains(
                     finalValueKeyToZSetKeyFunc.apply(fullKey.substring(fullKey.indexOf(":value:")+":value:".length()))
