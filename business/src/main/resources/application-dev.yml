@@ -44,6 +44,7 @@ moe:
   bv-proxy-prefix: ENC(Z/N/unxmOKaO23kRWn0z17KqudIISpZ8NQG7eRGGgPc=)
   proxy-prefix: ENC(ooWd3oYWSGnDs3LC1l8SWePRSUV27jEiFG2/03ElPDfbPjzXsADRGCskPw/x6KuA8qgNrPZpBREJBRnCTqDVCazmXm4ykRY4tfXVaIwPpwM=)
 # 限制视频转码 redis key    moe:limit:transform_video 有值就行
+# 轮播图    moe:recommend_carousel   写id，用分号隔开
 
 ali:
   oss:

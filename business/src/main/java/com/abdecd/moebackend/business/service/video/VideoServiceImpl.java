@@ -137,6 +137,12 @@ public class VideoServiceImpl implements VideoService {
         return entity.getId();
     }
 
+    /**
+     * 添加视频
+     * @param addVideoDTO 添加视频的DTO
+     * @param videoStatusWillBe 视频处理完将设置的状态
+     * @return 视频id
+     */
     @Caching(evict = {
         @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
         @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
