@@ -4,6 +4,7 @@ import com.abdecd.moebackend.business.common.util.HttpCacheUtils;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.BangumiVideoGroupTimeScheduleVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.BangumiVideoGroupVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.ContentsItemVO;
+import com.abdecd.moebackend.business.service.BangumiTimeTableService;
 import com.abdecd.moebackend.business.service.videogroup.BangumiVideoGroupServiceBase;
 import com.abdecd.moebackend.common.result.Result;
 import io.swagger.v3.oas.annotations.Operation;
@@ -26,6 +27,8 @@ import java.util.List;
 public class BangumiVideoGroupControllerBase {
     @Autowired
     private BangumiVideoGroupServiceBase bangumiVideoGroupServiceBase;
+    @Autowired
+    private BangumiTimeTableService bangumiTimeTableService;
 
     @Operation(summary = "获取视频组信息")
     @GetMapping("")
@@ -46,7 +49,7 @@ public class BangumiVideoGroupControllerBase {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        var vo = bangumiVideoGroupServiceBase.getTimeSchedule(date);
+        var vo = bangumiTimeTableService.getTimeSchedule(date);
         if (HttpCacheUtils.tryUseCache(request, response, vo)) return null;
         return Result.success(vo);
     }

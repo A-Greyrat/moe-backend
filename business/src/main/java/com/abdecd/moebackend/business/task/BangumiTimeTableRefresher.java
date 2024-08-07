@@ -32,10 +32,12 @@ public class BangumiTimeTableRefresher {
         );
         for (BangumiTimeTable bangumiTimeTable : needUpdate) {
             videoService.videoStatusUpdate(bangumiTimeTable.getVideoId(), Video.Status.ENABLE);
+            // 修改时间刷新
             bangumiVideoGroupMapper.update(new LambdaUpdateWrapper<BangumiVideoGroup>()
                     .eq(BangumiVideoGroup::getVideoGroupId, bangumiTimeTable.getVideoGroupId())
                     .set(BangumiVideoGroup::getUpdateTime, LocalDateTime.now())
             );
+            // 修改状态为已处理
             bangumiTimeTableMapper.updateById(bangumiTimeTable.setStatus(StatusConstant.DISABLE));
         }
     }

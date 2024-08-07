@@ -16,6 +16,12 @@ public class BangumiTimeTable {
     private Long id;
     private Long videoGroupId;
     private Long videoId;
+    /**
+     * 预定的发布时间
+     */
     private LocalDateTime updateTime;
+    /**
+     * 0已处理 1未处理
+     */
     private Byte status;
 }
