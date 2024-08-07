@@ -57,10 +57,8 @@ public class VideoControllerBack {
             var vg = videoGroupServiceBase.getVideoGroupInfoForce(addVideoDTO.getVideoGroupId());
             if (vg == null) throw new BaseException(MessageConstant.INVALID_VIDEO_GROUP);
             addVideoDTO.setCover(vg.getCover());
-            id = videoService.addVideoWithCoverResolved(addVideoDTO, addVideoDTO.getVideoStatusWillBe());
-        } else {
-            id = videoService.addVideo(addVideoDTO, addVideoDTO.getVideoStatusWillBe());
         }
+        id = videoService.addVideo(addVideoDTO, addVideoDTO.getVideoStatusWillBe(), false);
         if (Objects.equals(videoGroupServiceBase.getVideoGroupType(addVideoDTO.getVideoGroupId()), VideoGroup.Type.ANIME_VIDEO_GROUP)) {
             if (
                     Objects.equals(addVideoDTO.getVideoStatusWillBe(), Video.Status.PRELOAD)

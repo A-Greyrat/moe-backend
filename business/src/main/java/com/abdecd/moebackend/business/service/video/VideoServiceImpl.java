@@ -13,6 +13,7 @@ import com.abdecd.moebackend.business.dao.mapper.VideoMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoSrcMapper;
 import com.abdecd.moebackend.business.lib.BiliParser;
 import com.abdecd.moebackend.business.lib.ResourceLinkHandler;
+import com.abdecd.moebackend.business.lib.event.VideoAddEvent;
 import com.abdecd.moebackend.business.pojo.dto.video.AddVideoDTO;
 import com.abdecd.moebackend.business.pojo.dto.video.UpdateManyVideoIndexDTO;
 import com.abdecd.moebackend.business.pojo.dto.video.UpdateVideoDTO;
@@ -34,6 +35,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.ApplicationContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -72,22 +74,32 @@ public class VideoServiceImpl implements VideoService {
     private VideoGroupMapper videoGroupMapper;
     @Autowired
     private DanmakuMapper danmakuMapper;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     private static final Pattern bvPattern = Pattern.compile("BV[a-zA-Z0-9]+");
 
     private static final int TRANSFORM_TASK_TTL = 1800;
 
+    /**
+     * 添加视频
+     * @param addVideoDTO 添加视频的DTO
+     * @param videoStatusWillBe 视频处理完将设置的状态
+     * @param check 是否检查封面转换情况 默认否
+     * @return 视频id
+     */
     @Caching(evict = {
         @CacheEvict(cacheNames = RedisConstant.VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
         @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CONTENTS_CACHE, key = "#addVideoDTO.videoGroupId"),
     })
     @Transactional
     @Override
-    public long addVideo(AddVideoDTO addVideoDTO, Byte videoStatusWillBe) {
+    public long addVideo(AddVideoDTO addVideoDTO, Byte videoStatusWillBe, boolean check) {
         checkUserHaveTheGroup(addVideoDTO.getVideoGroupId());
 
         var entity = addVideoDTO.toEntity();
         videoMapper.insert(entity);
+        applicationContext.publishEvent(new VideoAddEvent(this, entity));
 
         // 封面处理
         var coverUrl = addVideoDTO.getCover();
@@ -100,7 +112,7 @@ public class VideoServiceImpl implements VideoService {
             if (cover.isEmpty()) throw new Exception(); // will be caught
             videoMapper.updateById(entity.setCover(cover));
         } catch (Exception e) {
-            throw new BaseException(MessageConstant.INVALID_FILE_PATH);
+            if (check) throw new BaseException(MessageConstant.INVALID_FILE_PATH);
         }
         // 链接处理
         if (addVideoDTO.getLink() != null && !addVideoDTO.getLink().isEmpty()) {
@@ -131,33 +143,8 @@ public class VideoServiceImpl implements VideoService {
     })
     @Transactional
     @Override
-    public long addVideoWithCoverResolved(AddVideoDTO addVideoDTO, Byte videoStatusWillBe) {
-        checkUserHaveTheGroup(addVideoDTO.getVideoGroupId());
-
-        var entity = addVideoDTO.toEntity();
-        videoMapper.insert(entity);
-
-        // 链接处理
-        if (addVideoDTO.getLink() != null && !addVideoDTO.getLink().isEmpty()) {
-            var originPath = resourceLinkHandler.getRawPathFromTmpVideoLink(addVideoDTO.getLink());
-            // 链接合法性检查 不是bv就正常检查
-            if (!bvPattern.matcher(addVideoDTO.getLink()).find()) {
-                if (!originPath.startsWith("tmp/user" + UserContext.getUserId() + "/"))
-                    throw new BaseException(MessageConstant.INVALID_FILE_PATH);
-            }
-            if (bvPattern.matcher(addVideoDTO.getLink()).find()) {
-                videoMapper.updateById(entity.setStatus(videoStatusWillBe));
-                videoSrcMapper.insert(new VideoSrc().setVideoId(entity.getId()).setSrcName("720p").setSrc(addVideoDTO.getLink()));
-            } else if (Objects.equals(videoStatusWillBe, Video.Status.ENABLE)) {
-                createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformEnableCb", "videoServiceImpl.videoTransformFailCb");
-            } else if (Objects.equals(videoStatusWillBe, Video.Status.PRELOAD)) {
-                createTransformTask(entity.getVideoGroupId(), entity.getId(), originPath, "videoServiceImpl.videoTransformPreloadCb", "videoServiceImpl.videoTransformFailCb");
-            } else throw new BaseException(MessageConstant.ARG_ERROR);
-        } else if (videoStatusWillBe != null) {
-            videoMapper.updateById(entity.setStatus(videoStatusWillBe));
-        }
-
-        return entity.getId();
+    public long addVideo(AddVideoDTO addVideoDTO, Byte videoStatusWillBe) {
+        return addVideo(addVideoDTO, videoStatusWillBe, true);
     }
 
     /**

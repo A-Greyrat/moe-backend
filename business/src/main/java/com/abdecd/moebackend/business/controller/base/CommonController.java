@@ -34,6 +34,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.Base64;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -156,7 +157,7 @@ public class CommonController {
             throw new BaseException(MessageConstant.LIMIT_TRANSFORM_VIDEO);
         if (!StringUtils.hasText(hash)) throw new BaseException(MessageConstant.ARG_ERROR);
         // 限流
-        if (!UserContext.getPermission().contains("99")) {
+        if (!List.of(UserContext.getPermission().split(",")).contains("99")) {
             var key = RedisConstant.LIMIT_GET_STS + UserContext.getUserId();
             if (rateLimiter.isRateLimited(
                     key,
