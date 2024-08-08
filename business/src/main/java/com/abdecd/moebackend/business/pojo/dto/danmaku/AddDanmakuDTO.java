@@ -36,7 +36,7 @@ public class AddDanmakuDTO {
 
         var crc32 = new CRC32();
         crc32.update(("user" + userId + "salt" + videoId).getBytes(StandardCharsets.UTF_8));
-        var crc32result = Long.toHexString(crc32.getValue());
+        var crc32result = String.format("%08X", crc32.getValue());
 
         danmaku.setUserId(userId)
             .setAuthor(crc32result)

@@ -13,21 +13,30 @@ import java.util.List;
 @Component
 @Aspect
 public class RequirePermissionAspect {
-    @Around("@annotation(RequirePermission)")
+    @Around("@annotation(RequirePermission) || @within(RequirePermission) && execution(public * *(..))")
     public Object requirePermission(ProceedingJoinPoint joinPoint) throws Throwable {
-        if (joinPoint.getSignature() instanceof MethodSignature methodSignature) {
-            Method method = methodSignature.getMethod();
-            RequirePermission requirePermission = method.getAnnotation(RequirePermission.class);
-
-            var permissions = requirePermission.value();
-            var userPermissions = List.of(UserContext.getPermission().split(","));
-            for (var permission : permissions) {
-                if (userPermissions.contains(permission)) return joinPoint.proceed();
-            }
-            throwException(requirePermission.exception(), "Permission denied");
-        } else {
+        if (!(joinPoint.getSignature() instanceof MethodSignature methodSignature))
             throw new IllegalStateException("不支持非方法切入点");
+
+        // get annotation
+        RequirePermission requirePermission;
+        Method method = methodSignature.getMethod();
+        requirePermission = method.getAnnotation(RequirePermission.class);
+        if (requirePermission == null) {
+            requirePermission = method.getDeclaringClass().getAnnotation(RequirePermission.class);
         }
+        if (requirePermission == null) {
+            throwException(RuntimeException.class, "Permission check failed");
+            return null; // never reach
+        }
+
+        // check permission
+        var permissions = requirePermission.value();
+        var userPermissions = List.of(UserContext.getPermission().split(","));
+        for (var permission : permissions) {
+            if (userPermissions.contains(permission)) return joinPoint.proceed();
+        }
+        throwException(requirePermission.exception(), "Permission denied");
         return null; // never reach
     }
 

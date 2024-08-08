@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @Tag(name = "后台通用视频组接口")
 @Slf4j
 @RestController
@@ -29,7 +30,6 @@ public class VideoGroupController {
     @Autowired
     private VideoMapper videoMapper;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "视频组类型获取", description = "data字段返回视频组类型")
     @GetMapping("/type")
     public Result<Integer> getVideoGroupType(@Valid @RequestParam("videoGroupId") String videoGroupId) {
@@ -37,7 +37,6 @@ public class VideoGroupController {
         return Result.success(videoGroupType);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "视频组列表获取", description = "data字段返回视频组列表")
     @GetMapping("/list")
     public Result<VideoGroupListVO> getVideoGroupList(@Valid @RequestParam("page") Integer page, @Valid @RequestParam("pageSize") Integer pageSize) {
@@ -45,7 +44,6 @@ public class VideoGroupController {
         return Result.success(videoGroupListVO);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "视频组对应视频获取", description = "data字段返回视频组对应视频")
     @GetMapping("/list-all-video")
     public Result<ArrayList<VideoForceWithWillUpdateTimeVO>> getAllVideo(@Valid @RequestParam("videoGroupId") Long videoGroupId) {
@@ -54,7 +52,6 @@ public class VideoGroupController {
         return Result.success(videoCompleteVOArrayList);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "视频组状态更改", description = "data字段返回是否成功")
     @PostMapping("/status")
     public Result<String> changeVideoGroupStatus(@RequestBody @Valid VideoGroupStatusDTO videoGroupStatusDTO) {

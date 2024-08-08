@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @Tag(name = "推荐接口")
 @RestController
 @RequestMapping("/backstage/video-group")
@@ -23,14 +24,12 @@ public class RecommendControllerBack {
     @Autowired
     private RecommendService recommendService;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "获取轮播列表")
     @GetMapping("carousel")
     public Result<List<VideoGroupWithDataVO>> getCarousel() {
         return Result.success(recommendService.getCarousel());
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "设置轮播列表")
     @PostMapping("carousel")
     public Result<String> setCarousel(@RequestBody @Valid SetCarouselDTO setCarouselDTO) {
@@ -38,7 +37,6 @@ public class RecommendControllerBack {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加轮播列表")
     @PostMapping("carousel/add")
     public Result<String> addCarousel(@RequestBody @Valid AddCarouselDTO dto) {
@@ -46,7 +44,6 @@ public class RecommendControllerBack {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除轮播列表")
     @PostMapping("carousel/delete")
     public Result<String> deleteCarousel(@RequestBody @Valid DeleteCarouselDTO dto) {

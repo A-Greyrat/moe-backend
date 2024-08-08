@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Objects;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @RestController
 @RequestMapping("/backstage/plain-user")
 public class PlainUserManageController {
@@ -25,7 +26,6 @@ public class PlainUserManageController {
     @Autowired
     private PlainUserManageService userService;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "列出所有用户")
     @GetMapping("/list")
     public Result<Object> listUsers(
@@ -42,7 +42,6 @@ public class PlainUserManageController {
         ));
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "封禁/解封用户")
     @PostMapping("/ban")
     public Result<String> banUser(@RequestBody @Valid BanUserDTO banUserDTO) {
@@ -55,7 +54,6 @@ public class PlainUserManageController {
         }
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "修改用户权限")
     @PostMapping("/update-permission")
     public Result<String> updatePermission(@RequestBody @Valid UpdateUserPermissionDTO dto) {

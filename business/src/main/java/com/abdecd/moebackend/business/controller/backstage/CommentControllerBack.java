@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @Tag(name = "评论接口")
 @RestController
 @RequestMapping("/backstage/video/comment")
@@ -25,7 +26,6 @@ public class CommentControllerBack {
     @Autowired
     private CommentService commentService;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "获取评论")
     @GetMapping("")
     public Result<PageVO<List<UserCommentVO>>> getComment(
@@ -36,7 +36,6 @@ public class CommentControllerBack {
         return Result.success(commentService.getComment(videoId, page, pageSize));
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除评论")
     @PostMapping("delete")
     public Result<String> deleteComment(@RequestBody @Valid DeleteCommentDTO deleteCommentDTO) {

@@ -57,3 +57,4 @@ token-login:
     - /statistic/video-group-data
     - /statistic/video-play-start
     - /feedback/add
+    - /notice/list

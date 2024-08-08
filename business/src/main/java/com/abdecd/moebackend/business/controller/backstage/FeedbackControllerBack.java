@@ -12,8 +12,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Map;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @RestController
 @RequestMapping("/backstage/feedback")
 public class FeedbackControllerBack {
@@ -21,7 +23,6 @@ public class FeedbackControllerBack {
     @Autowired
     private FeedbackService feedbackService;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "查看反馈")
     @GetMapping
     public Result<Object> getFeedbacks(
@@ -37,7 +38,6 @@ public class FeedbackControllerBack {
         ));
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "处理反馈")
     @PostMapping("/handle")
     public Result<String> handleFeedback(@RequestBody @Valid HandleFeedbackDTO handleFeedbackDTO) {
@@ -49,7 +49,6 @@ public class FeedbackControllerBack {
         }
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除反馈")
     @PostMapping("/delete")
     public Result<String> deleteFeedback(@RequestBody @Valid DeleteFeedbackDTO dto) {

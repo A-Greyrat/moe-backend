@@ -33,6 +33,7 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @Tag(name = "视频接口")
 @RestController
 @RequestMapping("/backstage/video")
@@ -50,7 +51,6 @@ public class VideoControllerBack {
     @Autowired
     private BangumiTimeTableService bangumiTimeTableService;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频")
     @PostMapping("add")
     public Result<Long> add(@RequestBody @Valid AddVideoFullDTO addVideoDTO) {
@@ -74,7 +74,6 @@ public class VideoControllerBack {
         return Result.success(id);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "修改视频")
     @PostMapping("update")
     public Result<String> update(@RequestBody @Valid UpdateVideoFullDTO dto) {
@@ -91,7 +90,6 @@ public class VideoControllerBack {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除视频")
     @PostMapping("delete")
     public Result<String> delete(@RequestBody @Valid DeleteVideoDTO dto) {
@@ -102,7 +100,6 @@ public class VideoControllerBack {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Async
     @Operation(summary = "获取视频")
     @GetMapping("")
@@ -112,7 +109,6 @@ public class VideoControllerBack {
         return CompletableFuture.completedFuture(Result.success(video));
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "批量改视频index")
     @PostMapping("update-many-index")
     public Result<String> updateManyIndex(@RequestBody @Valid UpdateManyVideoIndexDTO dto) {

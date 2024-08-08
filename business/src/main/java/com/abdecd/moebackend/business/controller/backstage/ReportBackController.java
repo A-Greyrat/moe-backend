@@ -16,6 +16,7 @@ import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @RestController
 @RequestMapping("/backstage/report")
 public class ReportBackController {
@@ -23,7 +24,6 @@ public class ReportBackController {
     @Autowired
     private ReportService reportService;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "审核举报")
     @PostMapping("/audit")
     public Result<String> auditReport(@Valid @RequestBody ReportDTO reportDTO) {
@@ -31,7 +31,6 @@ public class ReportBackController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "查看视频举报")
     @GetMapping("/video")
     public Result<ReportVideoTotalVO> getVideoReport(@Valid @RequestParam("page") @Min(1) Integer page, @Valid @RequestParam("pageSize") @Min(1) @Max(200) Integer pageSize) {
@@ -39,7 +38,6 @@ public class ReportBackController {
         return Result.success(reportVideoTotalVO);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "查看评论举报")
     @GetMapping("/comment")
     public Result<ReportCommentTotalVO> getCommentReport(@Valid @RequestParam("page") @Min(1) Integer page, @Valid @RequestParam("pageSize") @Min(1) @Max(200) Integer pageSize) {
@@ -47,7 +45,6 @@ public class ReportBackController {
         return Result.success(reportCommentTotalVO);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除举报")
     @PostMapping("/delete")
     public Result<String> deleteReport(@RequestBody @Valid DeleteReportDTO dto) {

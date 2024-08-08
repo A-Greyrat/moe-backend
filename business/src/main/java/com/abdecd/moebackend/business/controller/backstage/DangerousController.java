@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @Tag(name = "危险接口")
 @RestController
 @RequestMapping("/backstage/dangerous")
@@ -31,7 +32,6 @@ public class DangerousController {
     @Autowired
     private VideoGroupServiceBase videoGroupServiceBase;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频")
     @PostMapping("video/add")
     public Result<List<Long>> addVideo(@RequestBody List<Video> video) {
@@ -39,7 +39,6 @@ public class DangerousController {
         return Result.success(video.stream().map(Video::getId).toList());
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除视频")
     @PostMapping("video/delete")
     public Result<String> deleteVideo(@RequestBody List<Video> video) {
@@ -47,7 +46,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "更新视频")
     @PostMapping("video/update")
     public Result<String> updateVideo(@RequestBody List<Video> video) {
@@ -55,7 +53,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "更新视频源")
     @PostMapping("video-src/update")
     public Result<String> updateVideoSrc(@RequestBody List<VideoSrc> src) {
@@ -63,7 +60,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频源")
     @PostMapping("video-src/add")
     public Result<List<Long>> addVideoSrc(@RequestBody List<VideoSrc> src) {
@@ -71,7 +67,6 @@ public class DangerousController {
         return Result.success(src.stream().map(VideoSrc::getId).toList());
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除视频源")
     @PostMapping("video-src/delete")
     public Result<String> deleteVideoSrc(@RequestBody List<VideoSrc> src) {
@@ -79,7 +74,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "更新新番时间表")
     @PostMapping("bangumi/update")
     public Result<String> updateBangumi(@RequestBody List<BangumiTimeTable> bangumiTimeTables) {
@@ -87,7 +81,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加新番时间表")
     @PostMapping("bangumi/add")
     public Result<List<Long>> addBangumi(@RequestBody List<BangumiTimeTable> bangumiTimeTables) {
@@ -95,7 +88,6 @@ public class DangerousController {
         return Result.success(bangumiTimeTables.stream().map(BangumiTimeTable::getId).toList());
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除新番时间表")
     @PostMapping("bangumi/delete")
     public Result<String> deleteBangumi(@RequestBody List<BangumiTimeTable> bangumiTimeTables) {
@@ -103,7 +95,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "更新视频组")
     @PostMapping("video-group/update")
     public Result<String> updateVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
@@ -111,7 +102,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加视频组")
     @PostMapping("video-group/add")
     public Result<List<Long>> addVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
@@ -124,7 +114,6 @@ public class DangerousController {
         return Result.success(videoGroups.stream().map(com.abdecd.moebackend.business.dao.entity.VideoGroup::getId).toList());
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除视频组")
     @PostMapping("video-group/delete")
     public Result<String> deleteVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.VideoGroup> videoGroups) {
@@ -132,7 +121,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "更新番剧视频组")
     @PostMapping("bangumi-video-group/update")
     public Result<String> updateBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
@@ -140,7 +128,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "添加番剧视频组")
     @PostMapping("bangumi-video-group/add")
     public Result<List<Long>> addBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
@@ -148,7 +135,6 @@ public class DangerousController {
         return Result.success(bangumiVideoGroups.stream().map(com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup::getVideoGroupId).toList());
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "删除番剧视频组")
     @PostMapping("bangumi-video-group/delete")
     public Result<String> deleteBangumiVideoGroup(@RequestBody List<com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup> bangumiVideoGroups) {
@@ -156,7 +142,6 @@ public class DangerousController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "导入弹幕")
     @PostMapping("danmaku/import")
     public Result<List<Long>> importDanmaku(@RequestBody List<Danmaku> list) {

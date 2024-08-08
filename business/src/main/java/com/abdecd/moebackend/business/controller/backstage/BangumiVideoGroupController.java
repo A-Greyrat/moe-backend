@@ -31,6 +31,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
+@RequirePermission(value = "99", exception = BaseException.class)
 @Tag(name = "后台番剧视频组接口")
 @Slf4j
 @RestController
@@ -45,7 +46,6 @@ public class BangumiVideoGroupController {
     @Autowired
     private BangumiTimeTableMapper bangumiTimeTableMapper;
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "番剧视频组添加", description = "data字段返回新增视频组id")
     @PostMapping(value = "/add", consumes = "multipart/form-data")
     @ResponseBody
@@ -68,7 +68,6 @@ public class BangumiVideoGroupController {
         return Result.success(vid);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "番剧视频组删除")
     @PostMapping(value = "/delete")
     @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CACHE, beforeInvocation = true, key = "#videoDeleteDTO.id")
@@ -81,7 +80,6 @@ public class BangumiVideoGroupController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "番剧视频组更新")
     @PostMapping(value = "/update", consumes = "multipart/form-data")
     @CacheEvict(cacheNames = RedisConstant.BANGUMI_VIDEO_GROUP_CACHE, beforeInvocation = true, key = "#bangumiVideoGroupUpdateDTO.id")
@@ -92,7 +90,6 @@ public class BangumiVideoGroupController {
         return Result.success();
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "番剧视频组获取", description = "data字段返回番剧视频组信息")
     @GetMapping("")
     public Result<BangumiVideoGroupVO> getBangumiVideoGroupInfo(@Valid @RequestParam("id") Long id) {
@@ -118,7 +115,6 @@ public class BangumiVideoGroupController {
         return Result.success(bangumiVideoGroupVO);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "番剧视频组目录获取", description = "data字段返回番剧视频组目录")
     @GetMapping("/contents")
     public Result<ArrayList<VideoVo>> getBangumiVideoGroupContent(@Valid @RequestParam("id") Long id) {
@@ -126,7 +122,6 @@ public class BangumiVideoGroupController {
         return Result.success(videoVoList);
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "获取所有符合条件的番剧视频组", description = "data字段返回番剧视频组信息")
     @GetMapping("/all")
     public Result<PageVO<com.abdecd.moebackend.business.pojo.vo.backstage.videoGroup.BangumiVideoGroupVO>> getAllBangumiVideoGroup(
@@ -141,7 +136,6 @@ public class BangumiVideoGroupController {
         return Result.success(new PageVO<com.abdecd.moebackend.business.pojo.vo.backstage.videoGroup.BangumiVideoGroupVO>().setRecords(list).setTotal(total));
     }
 
-    @RequirePermission(value = "99", exception = BaseException.class)
     @Operation(summary = "获取新番时间表")
     @GetMapping("time-schedule")
     public Result<PageVO<BangumiTimeTableBackVO>> getBangumiVideoGroupList(
