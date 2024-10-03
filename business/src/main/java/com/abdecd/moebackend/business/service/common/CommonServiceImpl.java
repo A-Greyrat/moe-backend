@@ -1,7 +1,7 @@
 package com.abdecd.moebackend.business.service.common;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.common.property.MoeProperties;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;
 import com.google.code.kaptcha.impl.DefaultKaptcha;

@@ -1,9 +1,9 @@
 package com.abdecd.moebackend.business.service.videogroup;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.common.util.SpringContextUtil;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.VideoGroupMapper;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.ContentsItemVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupBigVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupVO;
@@ -11,10 +11,10 @@ import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupWithDataVO;
 import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.statistic.StatisticService;
 import com.abdecd.moebackend.business.service.video.VideoService;
+import com.abdecd.moebackend.business.tokenLogin.common.UserContext;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;
 import com.abdecd.moebackend.common.result.PageVO;
-import com.abdecd.tokenlogin.common.context.UserContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Nullable;

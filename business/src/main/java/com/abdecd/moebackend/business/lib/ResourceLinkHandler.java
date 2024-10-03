@@ -1,7 +1,7 @@
 package com.abdecd.moebackend.business.lib;
 
 import com.abdecd.moebackend.business.common.property.MoeProperties;
-import com.abdecd.tokenlogin.common.context.UserContext;
+import com.abdecd.moebackend.business.tokenLogin.common.UserContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

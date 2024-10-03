@@ -1,12 +1,12 @@
 package com.abdecd.moebackend.business.controller.backstage;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.comment.DeleteCommentDTO;
 import com.abdecd.moebackend.business.pojo.vo.comment.UserCommentVO;
 import com.abdecd.moebackend.business.service.comment.CommentService;
+import com.abdecd.moebackend.business.tokenLogin.aspect.RequirePermission;
 import com.abdecd.moebackend.common.result.PageVO;
 import com.abdecd.moebackend.common.result.Result;
-import com.abdecd.tokenlogin.aspect.RequirePermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;

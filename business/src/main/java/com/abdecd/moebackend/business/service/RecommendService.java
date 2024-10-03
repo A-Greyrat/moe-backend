@@ -1,6 +1,6 @@
 package com.abdecd.moebackend.business.service;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.common.util.SpringContextUtil;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.VideoGroupMapper;

@@ -2,8 +2,8 @@ package com.abdecd.moebackend.business.pojo.dto.comment;
 
 import com.abdecd.moebackend.business.common.util.SensitiveUtils;
 import com.abdecd.moebackend.business.dao.entity.UserComment;
+import com.abdecd.moebackend.business.tokenLogin.common.UserContext;
 import com.abdecd.moebackend.common.constant.DTOConstant;
-import com.abdecd.tokenlogin.common.context.UserContext;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

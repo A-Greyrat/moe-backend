@@ -1,6 +1,6 @@
 package com.abdecd.moebackend.business.service.fileservice;
 
-import com.abdecd.tokenlogin.common.context.UserContext;
+import com.abdecd.moebackend.business.tokenLogin.common.UserContext;
 import com.aliyun.oss.ClientException;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;

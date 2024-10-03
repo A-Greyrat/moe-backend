@@ -20,12 +20,12 @@ moe:
 
 token-login:
   jwt-ttl-seconds: 2592000 # 30天
-  jwt-refresh-ttl-seconds: 259200 # 3天
   exclude-patterns:
     - /error
     - /doc.html/**
     - /swagger-ui.html/**
     - /v3/api-docs/**
+    - /webjars/**
     - /user/login
     - /user/login-by-email
     - /user/signup

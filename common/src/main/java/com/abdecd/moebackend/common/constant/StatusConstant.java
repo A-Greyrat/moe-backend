@@ -1,6 +1,6 @@
 package com.abdecd.moebackend.common.constant;
 
-public class StatusConstant {
-    public static final Byte ENABLE = 1;
-    public static final Byte DISABLE = 0;
+public interface StatusConstant {
+    Byte ENABLE = 1;
+    Byte DISABLE = 0;
 }

@@ -1,11 +1,11 @@
 package com.abdecd.moebackend.business.service.videogroup;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.common.util.SpringContextUtil;
 import com.abdecd.moebackend.business.dao.entity.Video;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.VideoGroupMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoMapper;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.videogroup.PlainVideoGroupAddDTO;
 import com.abdecd.moebackend.business.pojo.dto.videogroup.PlainVideoGroupUpdateDTO;
 import com.abdecd.moebackend.business.pojo.vo.plainuser.UploaderVO;
@@ -15,9 +15,9 @@ import com.abdecd.moebackend.business.service.fileservice.FileService;
 import com.abdecd.moebackend.business.service.plainuser.PlainUserService;
 import com.abdecd.moebackend.business.service.search.SearchService;
 import com.abdecd.moebackend.business.service.video.VideoService;
+import com.abdecd.moebackend.business.tokenLogin.common.UserContext;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;
-import com.abdecd.tokenlogin.common.context.UserContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;

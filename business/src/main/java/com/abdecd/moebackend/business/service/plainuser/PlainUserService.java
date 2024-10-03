@@ -1,18 +1,18 @@
 package com.abdecd.moebackend.business.service.plainuser;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.controller.base.CommonController;
 import com.abdecd.moebackend.business.dao.entity.PlainUserDetail;
+import com.abdecd.moebackend.business.dao.entity.User;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.PlainUserDetailMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoGroupMapper;
+import com.abdecd.moebackend.business.dao.service.UserService;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.plainuser.UpdatePlainUserDTO;
 import com.abdecd.moebackend.business.service.fileservice.FileService;
+import com.abdecd.moebackend.business.tokenLogin.common.UserContext;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;
-import com.abdecd.tokenlogin.common.context.UserContext;
-import com.abdecd.tokenlogin.mapper.UserMapper;
-import com.abdecd.tokenlogin.pojo.entity.User;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class PlainUserService {
     @Autowired
     private PlainUserDetailMapper plainUserDetailMapper;
     @Autowired
-    private UserMapper userMapper;
+    private UserService userService;
     @Autowired
     private FileService fileService;
     @Autowired
@@ -65,18 +65,33 @@ public class PlainUserService {
         }
         if (updatePlainUserDTO.getNickname() != null) {
             // 昵称重复
-            if (userMapper.selectOne(new LambdaQueryWrapper<User>()
+            if (userService.exists(new LambdaQueryWrapper<User>()
                     .eq(User::getNickname, updatePlainUserDTO.getNickname())
-            ) != null) throw new BaseException(MessageConstant.USER_DULPLICATE);
-            userMapper.update(new LambdaUpdateWrapper<User>()
+            )) throw new BaseException(MessageConstant.USER_DULPLICATE);
+            userService.update(new LambdaUpdateWrapper<User>()
                     .eq(User::getId, UserContext.getUserId())
                     .set(User::getNickname, updatePlainUserDTO.getNickname())
             );
+            userService.getUserCache().delete(UserContext.getUserId() + "");
         }
         var entity = updatePlainUserDTO.toEntity(UserContext.getUserId());
         if (newFileUrl != null) entity.setAvatar(newFileUrl);
         plainUserDetailMapper.updateById(entity);
         if (oldFileUrl != null) fileService.deleteFile(oldFileUrl);
+        // 清理缓存
+        clearVideoGroupCache(UserContext.getUserId());
+    }
+
+    @CacheEvict(value = RedisConstant.PLAIN_USER_DETAIL, key = "#root.target.getCurrUserId()")
+    @Transactional
+    public void deleteCurrPlainUserDetail() {
+        var user = User.toBeDeleted(UserContext.getUserId());
+        plainUserDetailMapper.updateById(new PlainUserDetail()
+            .setUserId(UserContext.getUserId())
+            .setNickname(user.getNickname())
+            .setAvatar("")
+            .setSignature("")
+        );
         // 清理缓存
         clearVideoGroupCache(UserContext.getUserId());
     }

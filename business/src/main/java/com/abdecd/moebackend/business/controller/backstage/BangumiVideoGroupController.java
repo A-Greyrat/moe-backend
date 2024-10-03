@@ -1,8 +1,8 @@
 package com.abdecd.moebackend.business.controller.backstage;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.BangumiTimeTableMapper;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.backstage.bangumiVideoGroup.BangumiVideoGroupAddDTO;
 import com.abdecd.moebackend.business.pojo.dto.backstage.bangumiVideoGroup.BangumiVideoGroupUpdateDTO;
 import com.abdecd.moebackend.business.pojo.dto.backstage.videogroup.VideoGroupDeleteDTO;
@@ -13,10 +13,10 @@ import com.abdecd.moebackend.business.pojo.vo.videogroup.BangumiTimeTableBackVO;
 import com.abdecd.moebackend.business.service.backstage.BangumiVideoGroupService;
 import com.abdecd.moebackend.business.service.backstage.VideoGroupService;
 import com.abdecd.moebackend.business.service.statistic.StatisticService;
+import com.abdecd.moebackend.business.tokenLogin.aspect.RequirePermission;
 import com.abdecd.moebackend.common.constant.RedisConstant;
 import com.abdecd.moebackend.common.result.PageVO;
 import com.abdecd.moebackend.common.result.Result;
-import com.abdecd.tokenlogin.aspect.RequirePermission;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

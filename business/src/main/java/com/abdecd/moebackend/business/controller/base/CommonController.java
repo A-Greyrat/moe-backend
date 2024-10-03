@@ -1,8 +1,8 @@
 package com.abdecd.moebackend.business.controller.base;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.common.property.MoeProperties;
 import com.abdecd.moebackend.business.common.util.ImageChecker;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.lib.AliStsManager;
 import com.abdecd.moebackend.business.lib.RateLimiter;
 import com.abdecd.moebackend.business.pojo.dto.common.VerifyEmailDTO;
@@ -10,11 +10,11 @@ import com.abdecd.moebackend.business.pojo.vo.common.AliStsVO;
 import com.abdecd.moebackend.business.pojo.vo.common.CaptchaVO;
 import com.abdecd.moebackend.business.service.common.CommonService;
 import com.abdecd.moebackend.business.service.fileservice.FileService;
+import com.abdecd.moebackend.business.tokenLogin.common.UserContext;
+import com.abdecd.moebackend.business.tokenLogin.service.TokenLoginService;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;
 import com.abdecd.moebackend.common.result.Result;
-import com.abdecd.tokenlogin.common.context.UserContext;
-import com.abdecd.tokenlogin.service.UserBaseService;
 import com.aliyuncs.exceptions.ClientException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -50,7 +50,7 @@ public class CommonController {
     @Autowired
     StringRedisTemplate redisTemplate;
     @Autowired
-    private UserBaseService userBaseService;
+    private TokenLoginService tokenLoginService;
     @Autowired
     private RateLimiter rateLimiter;
     @Autowired
@@ -146,7 +146,7 @@ public class CommonController {
     @Operation(summary = "获得公钥")
     @GetMapping("public-key")
     public Result<String> getPublicKey() {
-        return Result.success(userBaseService.getPublicKey());
+        return Result.success(tokenLoginService.getPublicKey());
     }
 
     @Async

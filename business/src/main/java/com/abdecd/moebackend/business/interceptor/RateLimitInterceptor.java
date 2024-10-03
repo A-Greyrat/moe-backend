@@ -1,6 +1,6 @@
 package com.abdecd.moebackend.business.interceptor;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.lib.RateLimiter;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;

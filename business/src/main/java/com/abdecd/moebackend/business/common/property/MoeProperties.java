@@ -36,5 +36,9 @@ public class MoeProperties {
      * 视频反代url前缀
      */
     private String bvProxyPrefix;
+    /**
+     * 详见 {@link com.abdecd.moebackend.business.dao.dataencrypt.EncryptStrHandler}
+     */
+    public String encryptStrAesKey;
     // moe.local-file-service 详见 service/fileservice/LocalFileServiceImpl
 }

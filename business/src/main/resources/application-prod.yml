@@ -1,26 +1,26 @@
 spring:
   datasource:
-    url: ENC(r1m8oz8iNdlCWf33w0/Qkunz3sHhCjH/HxQj8vnXmzZL/fgDm9OU3Azh6Cihekk2WT/A4d/Vpe6lgFqxGGh3XnCbZjtuMO4K/u3la4KmJds=)
-    username: ENC(Ru+KGnuaXuT/ntaMHT07HQ==)
-    password: ENC(vkh3j2DP1ktSYplLYp5How==)
+    url: ENC(+r9IpQNvaizx5bXQPk1K2at1ce/gp6S0KWYNvl+SdzN6QMWfrO+R4DMMlQPPCOXeLggvzczsN+8I2IIl8TXwoDne42Dt3zbCh7PFzLAAWq2Tn0pAAcB7Rp30uzzcB9R0G4T2tjfmfdzG7a7UX3jAxw==)
+    username: ENC(Hxh5QqdHIlyK5npXN2U+CRN7JEpkBMPmZ3knkc2Zx3RQUTjG0qsatjapSoQxioaI)
+    password: ENC(vCeaDXRsGFeNKa64AIW90GEY/CiX+uifPKSllU26fyWZS9dCGIG0020nGTf5kdl4)
     driver-class-name: com.mysql.cj.jdbc.Driver
   data:
     redis:
-      host: ENC(9asPJfRcyJH7JW8OjLjM1G8YBbyuu/Yz)
-      port: ENC(piXPG2KAVGGlUOm0JFLpQg==)
-      database: ENC(v+BmJn6xVMv6hBVTFvuI2g==)
-      password: ENC(WffpHoZ9O1zB5cC+sxN7Bg==)
+      host: ENC(UM926aFm4QpTy1R99VJUaQ7heYrYJ9I4Bb1w6+LCquIRBrdRjmNon2vkdzOiLb1d)
+      port: ENC(rfjhC5yJe5eFtUvlDjJGP48dJH/4Q/kMBY5likIY5ORJGUXiLNVIshnU1Y56VCov)
+      database: ENC(uOvRuSSLakEnjYf+O0bd2drsVo25tHSTWlp2/m8zw73/+z/jWeph/H38/6VqQJXL)
+      password: ENC(o2yXzt68qi1V41FV2xeCuAuqz7z2/MwqVhinNRfmkRgPRpC66BlzCrBuzqQi2oM9)
     elasticsearch:
-      url: ENC(lsigF9hIrgA1iYwch1s8vlcgMkYcyDObZ2JHN0nw1yX7P3pRF5sR/Q==)
+      url: ENC(jH284awtTq62iiIs8ssFvrta1DH4vKmkKV4RKznTv+hkqllQXxMcbavzM+IU1GcITUjWlcvPz/69tndBcPuJJg==)
   cache:
     type: redis
   mail:
-    host: ENC(hD1Ik9cai/SLQR629pN1y1VpWgJVWnSO)
-    port: ENC(7Af0FzK3ZIkuYoCdeB+dDg==)
+    host: ENC(6nrJvoHLhw5CdulwgwkYzkDm4mfHegHl9KUCk61zvnt+Z4SK0cuLxB3oMXkstafJ)
+    port: ENC(+DMIC7QHU0nw//RR1KDm0CkxEr9XyiXciZ7Qo9rr4ZqS+gn339gorIs5PqCPjvKr)
     protocol: smtps
     default-encoding: UTF-8
-    username: ENC(1sCYDn+GEI6x2HEmswmPBIwrEGfHqHEM)
-    password: ENC(CByiy0zVYP2nJCSGgpojqO+Jm75vka15ywysa52+/PA=)
+    username: ENC(a8SJOu0xA/5hSg2c+TFpXowOnDvYvS2yVkHzdvmhXrD75JM5R7fXlfM+910O8Qyp)
+    password: ENC(5Yy2RNusxwOCAh4JzF1jciQJrv0RXhfFc1kuCzAgIMkYHl5khDjQHu95yjNOnKtfHFjWgxAKIbZNxCwgf6W11g==)
     test-connection: true
     properties:
       mail:
@@ -35,29 +35,26 @@ logging:
   level:
     root: info
 
-token-login:
-  encrypt-str-aes-key: ENC(6uMGkAIYVocx/NCTAlKJ25TsxGdXugmbg9MWgPqBvQg=)
-
 moe:
-  video-base-path: ENC(tGyV+wYsVc1B7e8Iy4OqcBe9E+Wqm+6zwD1L0PXuQWlLKWyImhoOxQ==)
-  default-video-path: ENC(f9g8e2M5m07Nw/bcVO5YuBkaBt3haw81OVsdTjnLWlCDfH9XyYV6csGHzacgj7JXnUI5hkeJy0g=)
-  bili-session: ENC(JvJpbzOd6/YEtkT2+N8wRCMYmmcJtZMK7/A7IbXw78LTlP6usoSSvukRLt+2AZBlZ1PJi+ZWq6uZssSPMvO15c4w0RnDVBb0+CvTm9aLxxfJxlsGMJZQQavojrDAw26xYRTerbNLsjSo8zt4e0YzuertXqWqvqibu20YlXAv+GJM0oUajvF+/ohMr2SnwW4Wj8KOLCMRWo5BO2PqaiqAD0tm5R2HOx6Im4vvSvh2sSmF9hqNPjp2w6jD+f2l9ihR1KRp/AC7qm4dRY7egzpgExaVZ5p519T0kAHHvsobCq4uCShLjtjshw==)
-  bv-url: ENC(0A4wnk4U47J7OxvEis2aHAExwVqL9o+sUo2hXGS++1I=)
-  bv-proxy-prefix: ENC(uA7WgaavYuH8ZJ6Xpnte0OZfBW/ugU/lyffKnRomeFU=)
-  proxy-prefix: ENC(COw0VZC1FQj6/TWL1L4tWe3mYb8C2Xgn3/Guu7ilbkm06C7d2SZVby0vep9Mu2U20ZzJFndV2HaAfJ1zuS9HjmeEClIZbAJQMKY/Bt0CJrA=)
-# 限制视频转码 redis key    moe:limit:transform_video 有值就行
+  encrypt-str-aes-key: ENC(/TrfDJ/y1HMVZaW88M/2UN/OYumIRRoDNPZwgylw1tGJ3Q5eIVk7ywiXOwT7Ay4LIpCiFpvD3U2RELCzaJYMwA==)
+  video-base-path: ENC(aABCTwXhTiIRGv0D0F1MjXJ71Go6YApRko8ifDbY+u4SRHVvNsvcOPYeJd0Xt+KJ2RKEkIhZysOvbAy8vIs0mg==)
+  default-video-path: ENC(K94ePgBEVU06D3+D7uRmSdqDMvdQlSp+Z5e6ff+lWDIZFx5pyIfg/SUJvOM/UcVWo+HNzz1aLhyioWH4+dbAZULMebP0fD+UyKy19DTuiOA=)
+  bili-session: ENC(QFJQJt+lbMLL1oWs1t3owKrHDjBaEbem3fpMv9kLenttv6zil6JzaIKZ+e/hYJpDzhi5Oe42sgb1skUgid2Cxi75aM1dQ3mUcgy9/HCf/Wg3FA5+ko0wRtXpMBEEReRLm76jQp7RlI0FPKTyI1aX/70kt6jUtOYeXWtWhqE6lkF0un017AchXjqqgUi3GstzyRCUGJnTKpUCHkSUJM3JJ6RnrrY65898EzmrIOBxbvmAGH8jXs12+MJnUbe3vAEzRR7W0IwCa+RZb9viVHhQUjWViHsZ0AxMJCkmxpGnJDRhjfR4i4RnfQQIEX/li0wuUmwfifucmXcS7VtzIVGvIw==)
+  bv-url: ENC(+2Mo7dwDjBZHy7SABggB3HCv+A+1p1GTA5B6ikI1+PhhqY4oAKciLazfGbiM5AoMVPCcpjX5ItVWOFHNjm8x1Q==)
+  bv-proxy-prefix: ENC(LBIJpjxmGccAEhypObtWl5s+VfwfqtetcQERFkUX1jlSHa/ozO52Jd6nN9goRhLgzTZBGEPWsze+/7OlrrKYhA==)
+  proxy-prefix: ENC(U/qwz8wFumIxEpwqjVgLychcbPXXU6OweNfzfM0AuTPoQr3QNA3JJTyvH7B2vqTQpvf5PYnOcPoIyKbGbBnWAEMz9oCOe5xJouT95bL3bFNPpVGL/ujhgkyj90NMK1wpV58av/siGpteWoohtqsE+g==)
 
 ali:
   oss:
     enable: true
-    access-key-id: ENC(TeVuFeoZ6/NONWYqHL7FxApDXOCMrXfrcZMdYvn9ZqmJQbVgJydz7Q==)
-    access-key-secret: ENC(SI09SkXFPF+ghXbAisDTaT1Bu2q52ZsGFPpYpolzvYJoXw5fExTqWg==)
-    bucket-name: ENC(FIF+MTobSJR/v7IAs5REPA==)
-    endpoint: ENC(iEM38GHtp2ERJ6QLmBcPZnhJQxDUb7mkJyzPMzWlhuZipVLaNIFqnA==)
-    url-prefix: ENC(qysjO2pnSVhCz+4lUBzvFIuuumX5E4j85cYBU1AmDz0ce05JopS0Sw==)
-    sts-region-id: ENC(81Ny6T/87QxtBXy21A4GX364rq/erPFD)
-    sts-endpoint: ENC(GYLwXqtRywtby1sFhAvVO50csMVPFhmilG1cAI83NFcBUh7aUPqxtA==)
-    sts-role-arn: ENC(v81cyxtmXfnVN8fNVT9TQtFjaNEdEDzUJnBh/XuLm/uh8MEpAR61bbqZuj89LMlPCjZaHfe2oDs=)
+    access-key-id: ENC(POvmwZz7B2ipbRhAb8+rXgr2ymRCe61CDikuxrjVF7LyztJnlMCIGFK7Zg3nVTMUbH2go0wXS718pp/uU8yoaQ==)
+    access-key-secret: ENC(DVuBXgAYrwCgyme4sCL0Xqwv9TcuKvbJlojodynJGI8Te8HDcMmmE1GcuvV8KffcdODKWEQBymrgICT26rzJRg==)
+    bucket-name: ENC(+H8d/VdHw2ZPnRAJjvgBY9jkkpZf7WkpvxuslI8rPIOsjtyqaCTY5yAPIDx0sKfK)
+    endpoint: ENC(bXUGzJbnHU/hmAm4pnjIhIMy36iz/K0XZHtWQOXP3dZK6jCa61dHlzJQQws+OaS4ei8nrBi4EExUR+gqWt97rA==)
+    url-prefix: ENC(kGxnoTlSQeUTccNZu4rU2BrlbJgvbWaSxhunz93Rp9rSD5eALch1BSdZ0lp1jFD9dpUP4C1xkxncBhRelr4Sjw==)
+    sts-region-id: ENC(5irsaf2+EHf3e8qVeZMMuno6iB8+wy8bnmzt1dE5gdbAhZMgDr/c/+hv66vVjAI3)
+    sts-endpoint: ENC(kj66HGkyECY30Ih39WIQ5dCg78Bc+pWV88Vea/Eic5cXp+eCLvlkm6n9FOca4zYKIW4/Yd0IpmxdVs2gCpxuLg==)
+    sts-role-arn: ENC(ZmTww4RlhlecpP/pTUKbMoDIqSI/afoLnXWiFxYlwHyxWsI5eU+LhJRhlvAIQDS746rMbhvlFaSsOWmhWXuEPZcUUjK4DIK1eoVTSwRXZQ4=)
     sts-duration-seconds: 900
     sts-max-size: 2_147_483_648 # 2GB
-    watermark: ENC(o1zbigCJrJvNHLRpR6Gd9ZeCHpfL8rX/m18Cdv9dFqY=)
+    watermark: ENC(tAQmw/oeXA4If00K5hxUZljHR7DG879MzPvegNLH4BSb2GYbdCXD31gf1VdByfkF19hc+Rgoqz6KAZWKdWbXVA==)

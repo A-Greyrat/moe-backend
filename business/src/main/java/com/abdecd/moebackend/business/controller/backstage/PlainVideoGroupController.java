@@ -1,7 +1,7 @@
 package com.abdecd.moebackend.business.controller.backstage;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.backstage.commonVideoGroup.VideoGroupAddDTO;
 import com.abdecd.moebackend.business.pojo.dto.backstage.commonVideoGroup.VideoGroupDTO;
 import com.abdecd.moebackend.business.pojo.dto.backstage.videogroup.VideoGroupDeleteDTO;
@@ -12,10 +12,10 @@ import com.abdecd.moebackend.business.pojo.vo.statistic.StatisticDataVO;
 import com.abdecd.moebackend.business.service.backstage.PlainVideoGroupService;
 import com.abdecd.moebackend.business.service.backstage.VideoGroupService;
 import com.abdecd.moebackend.business.service.statistic.StatisticService;
+import com.abdecd.moebackend.business.tokenLogin.aspect.RequirePermission;
 import com.abdecd.moebackend.common.constant.RedisConstant;
 import com.abdecd.moebackend.common.result.PageVO;
 import com.abdecd.moebackend.common.result.Result;
-import com.abdecd.tokenlogin.aspect.RequirePermission;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;

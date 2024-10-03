@@ -1,6 +1,5 @@
 package com.abdecd.moebackend.business.service.video;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.common.property.MoeProperties;
 import com.abdecd.moebackend.business.common.util.SpringContextUtil;
 import com.abdecd.moebackend.business.dao.entity.Danmaku;
@@ -11,6 +10,7 @@ import com.abdecd.moebackend.business.dao.mapper.DanmakuMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoGroupMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoSrcMapper;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.lib.BiliParser;
 import com.abdecd.moebackend.business.lib.ResourceLinkHandler;
 import com.abdecd.moebackend.business.lib.event.VideoAddEvent;
@@ -24,9 +24,9 @@ import com.abdecd.moebackend.business.pojo.vo.video.VideoVO;
 import com.abdecd.moebackend.business.service.fileservice.FileService;
 import com.abdecd.moebackend.business.service.plainuser.PlainUserService;
 import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
+import com.abdecd.moebackend.business.tokenLogin.common.UserContext;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.constant.RedisConstant;
-import com.abdecd.tokenlogin.common.context.UserContext;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import lombok.extern.slf4j.Slf4j;
@@ -155,8 +155,11 @@ public class VideoServiceImpl implements VideoService {
 
     /**
      * 创建转码任务，并在超时后删除
+     * @param videoGroupId :
      * @param videoId :
      * @param originPath 如 tmp/1/video.mp4
+     * @param cbStr 例如 videoServiceImpl.videoTransformEnableCb
+     * @param failCbStr 例如 videoServiceImpl.videoTransformFailCb
      */
     public void createTransformTask(Long videoGroupId, Long videoId, String originPath, String cbStr, String failCbStr) {
         if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(RedisConstant.LIMIT_TRANSFORM_VIDEO)))
@@ -246,7 +249,7 @@ public class VideoServiceImpl implements VideoService {
             .setId(videoId)
             .setStatus(videoStatus)
         );
-        // 如果视频组显示正在转码(转码没设缓存)，那放出来
+        // 如果videoStatus转为enable且视频组显示正在转码(转码没设缓存)，那放出来
         if (Objects.equals(videoStatus, Video.Status.ENABLE)) {
             var videoGroup = videoGroupMapper.selectById(getVideoGroupIdFromVideoId(videoId));
             if (videoGroup == null) return;
@@ -417,11 +420,13 @@ public class VideoServiceImpl implements VideoService {
                         String url = "";
                         try {
                             url = biliParser.parseBV(srcObj.getSrc(), srcObj.getSrcName(), vo.getIndex() + "");
-                        } catch (Exception ignored) {
+                        } catch (Exception e) {
+                            log.warn("parseBV failed: " + e.getMessage());
                         }
                         try {
                             if (url.isEmpty()) url = biliParser.parseBV(srcObj.getSrc(), srcObj.getSrcName(), "1");
-                        } catch (Exception ignored) {
+                        } catch (Exception e) {
+                            log.warn("parseBV failed: " + e.getMessage());
                         }
                         return url;
                     }, Executors.newVirtualThreadPerTaskExecutor()));

@@ -2,10 +2,11 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.abdecd.moebackend.business.dao.mapper.PlainUserManageMapper">
     <resultMap id="allvo" type="com.abdecd.moebackend.business.pojo.vo.plainuser.AllVO" autoMapping="true">
-            <result typeHandler="com.abdecd.tokenlogin.common.dataencrypt.EncryptStrHandler" column="email" property="email"/>
+        <result typeHandler="com.abdecd.moebackend.business.dao.dataencrypt.EncryptStrHandler" column="email"
+                property="email"/>
     </resultMap>
     <select id="selectUsers" resultMap="allvo">
-        SELECT id, user.nickname, email, status, permission, create_time, avatar, signature 
+        SELECT id, user.nickname, email, status, permission, create_time, avatar, signature
         FROM user LEFT JOIN plain_user_detail ON user.id = plain_user_detail.user_id
         <where>
             <if test='id != null'>AND id = #{id}</if>

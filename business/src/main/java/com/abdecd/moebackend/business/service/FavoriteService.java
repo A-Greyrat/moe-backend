@@ -1,11 +1,11 @@
 package com.abdecd.moebackend.business.service;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.dao.entity.PlainUserFavorite;
 import com.abdecd.moebackend.business.dao.entity.PlainUserLike;
 import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.PlainUserFavoriteMapper;
 import com.abdecd.moebackend.business.dao.mapper.PlainUserLikeMapper;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.pojo.vo.favorite.BangumiVideoGroupFavoriteVO;
 import com.abdecd.moebackend.business.pojo.vo.favorite.FavoriteVO;
 import com.abdecd.moebackend.business.pojo.vo.videogroup.VideoGroupVO;

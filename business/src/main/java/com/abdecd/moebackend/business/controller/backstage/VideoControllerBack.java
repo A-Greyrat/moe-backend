@@ -1,6 +1,5 @@
 package com.abdecd.moebackend.business.controller.backstage;
 
-import com.abdecd.moebackend.business.common.exception.BaseException;
 import com.abdecd.moebackend.business.dao.entity.BangumiTimeTable;
 import com.abdecd.moebackend.business.dao.entity.BangumiVideoGroup;
 import com.abdecd.moebackend.business.dao.entity.Video;
@@ -8,6 +7,7 @@ import com.abdecd.moebackend.business.dao.entity.VideoGroup;
 import com.abdecd.moebackend.business.dao.mapper.BangumiTimeTableMapper;
 import com.abdecd.moebackend.business.dao.mapper.BangumiVideoGroupMapper;
 import com.abdecd.moebackend.business.dao.mapper.VideoMapper;
+import com.abdecd.moebackend.business.exceptionhandler.BaseException;
 import com.abdecd.moebackend.business.pojo.dto.video.AddVideoFullDTO;
 import com.abdecd.moebackend.business.pojo.dto.video.DeleteVideoDTO;
 import com.abdecd.moebackend.business.pojo.dto.video.UpdateManyVideoIndexDTO;
@@ -16,9 +16,9 @@ import com.abdecd.moebackend.business.pojo.vo.video.VideoForceWithWillUpdateTime
 import com.abdecd.moebackend.business.service.BangumiTimeTableService;
 import com.abdecd.moebackend.business.service.video.VideoService;
 import com.abdecd.moebackend.business.service.videogroup.VideoGroupServiceBase;
+import com.abdecd.moebackend.business.tokenLogin.aspect.RequirePermission;
 import com.abdecd.moebackend.common.constant.MessageConstant;
 import com.abdecd.moebackend.common.result.Result;
-import com.abdecd.tokenlogin.aspect.RequirePermission;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import io.swagger.v3.oas.annotations.Operation;
